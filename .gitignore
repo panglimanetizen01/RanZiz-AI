@@ -1,0 +1,56 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Test / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Lint cache
+.ruff_cache/
+
+# Local database
+database/
+*.db
+*.sqlite
+*.sqlite3
+database.json
+memory.json
+
+# Runtime data
+logs/
+archive/
+
+# Local config
+profile.py
+.env
+.env.*
+
+# Legacy / release files
+plugins_legacy/
+releases/
+*.tar.gz
+*.sha256
+
+# Audit reports
+*_report.txt
+*_scan.txt
+*_scan
+all_py.txt
+files.txt
+imports.txt
+imports_scan.txt
+struktur.txt
+project_files.txt
+core_runtime.txt
+runtime.txt
+
+# OS files
+.DS_Store
+
+# Temporary audit/debug artifacts
+doctor_*.txt
+ruf*.txt
+runtime*_bundle.txt

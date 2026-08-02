@@ -1,0 +1,1 @@
+from .genre_registry import GenreRegistry as GenreRegistry
