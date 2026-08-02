@@ -5,9 +5,7 @@ Version 1.0
 
 import unittest
 
-from source.core.runtime.runtime_adapter import (
-    RuntimeAdapter
-)
+from source.core.runtime.core_runtime_adapter import CoreRuntimeAdapter
 
 
 class DummyRuntime:
@@ -40,9 +38,7 @@ class RuntimeAdapterTest(unittest.TestCase):
 
     def test_process(self):
 
-        adapter = RuntimeAdapter.__new__(
-            RuntimeAdapter
-        )
+        adapter = CoreRuntimeAdapter()
 
         adapter.runtime = DummyRuntime()
 
