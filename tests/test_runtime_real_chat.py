@@ -5,7 +5,7 @@ Version 1.0
 
 import unittest
 
-from source.core.runtime.runtime_adapter import RuntimeAdapter
+from source.core.runtime.core_runtime_adapter import CoreRuntimeAdapter
 
 
 class RuntimeRealChatTest(unittest.TestCase):
@@ -13,7 +13,7 @@ class RuntimeRealChatTest(unittest.TestCase):
 
     def test_chat_returns_value(self):
 
-        runtime = RuntimeAdapter()
+        runtime = CoreRuntimeAdapter()
 
         result = runtime.process(
             "Apa kabar?"
@@ -26,7 +26,7 @@ class RuntimeRealChatTest(unittest.TestCase):
 
     def test_chat_type(self):
 
-        runtime = RuntimeAdapter()
+        runtime = CoreRuntimeAdapter()
 
         result = runtime.process(
             "Halo"

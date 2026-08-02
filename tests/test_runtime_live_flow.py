@@ -5,7 +5,7 @@ Version 1.0
 
 import unittest
 
-from source.core.runtime.runtime_adapter import RuntimeAdapter
+from source.core.runtime.core_runtime_adapter import CoreRuntimeAdapter
 
 
 class RuntimeLiveFlowTest(unittest.TestCase):
@@ -13,7 +13,7 @@ class RuntimeLiveFlowTest(unittest.TestCase):
 
     def test_runtime_flow(self):
 
-        runtime = RuntimeAdapter()
+        runtime = CoreRuntimeAdapter()
 
         result = runtime.process(
             "halo"

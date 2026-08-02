@@ -5,7 +5,7 @@ Version 1.0
 
 import unittest
 
-from source.core.runtime.runtime_adapter import RuntimeAdapter
+from source.core.runtime.core_runtime_adapter import CoreRuntimeAdapter
 
 
 class RuntimeStabilityTest(unittest.TestCase):
@@ -13,7 +13,7 @@ class RuntimeStabilityTest(unittest.TestCase):
 
     def test_multiple_requests(self):
 
-        runtime = RuntimeAdapter()
+        runtime = CoreRuntimeAdapter()
 
         messages = [
 
@@ -43,7 +43,7 @@ class RuntimeStabilityTest(unittest.TestCase):
 
     def test_runtime_reuse(self):
 
-        runtime = RuntimeAdapter()
+        runtime = CoreRuntimeAdapter()
 
         first = runtime.process(
             "Halo"
