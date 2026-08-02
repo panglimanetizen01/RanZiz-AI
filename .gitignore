@@ -54,3 +54,4 @@ runtime.txt
 doctor_*.txt
 ruf*.txt
 runtime*_bundle.txt
+database.json.bak
