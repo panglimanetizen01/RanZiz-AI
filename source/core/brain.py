@@ -8,7 +8,7 @@ from source.commands.commands import Commands
 from source.commands.handlers.command_handler import CommandHandler
 from source.config.config import Config
 from source.context.context_gateway import ContextGateway
-from source.core.runtime.runtime_adapter import RuntimeAdapter
+from source.core.runtime.core_runtime_adapter import CoreRuntimeAdapter
 from source.core.runtime.runtime_handler import RuntimeHandler
 from source.decision.decision_engine import DecisionEngine
 from source.decision.goal_analyzer import GoalAnalyzer
@@ -70,7 +70,7 @@ class Brain:
         self.goal = GoalAnalyzer()
         self.decision = DecisionEngine()
 
-        self.runtime = RuntimeAdapter()
+        self.runtime = CoreRuntimeAdapter()
 
         self.runtime_handler = RuntimeHandler(
             self.runtime
