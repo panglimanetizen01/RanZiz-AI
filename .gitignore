@@ -12,7 +12,7 @@ htmlcov/
 .ruff_cache/
 
 # Local database
-database/
+/database/
 *.db
 *.sqlite
 *.sqlite3
