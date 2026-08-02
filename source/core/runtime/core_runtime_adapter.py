@@ -1,6 +1,6 @@
 """
 RanZiz AI Core Runtime Adapter
-Version 1.0
+Version 1.1
 """
 
 
@@ -33,6 +33,46 @@ class CoreRuntimeAdapter:
     ):
 
         return self.runtime.chat(
+
+            message,
+
+            context
+
+        )
+
+
+
+    def execute(
+
+        self,
+
+        message,
+
+        context=None
+
+    ):
+
+        return self.process(
+
+            message,
+
+            context
+
+        )
+
+
+
+    def chat(
+
+        self,
+
+        message,
+
+        context=None
+
+    ):
+
+        return self.process(
 
             message,
 
