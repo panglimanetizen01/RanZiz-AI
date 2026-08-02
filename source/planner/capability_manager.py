@@ -39,6 +39,10 @@ class CapabilityManager:
                 "Research Engine"
             ],
 
+            "MARKETING": [
+                "Marketing Engine"
+            ],
+
             "IMAGE": [
                 "Image Engine"
             ],

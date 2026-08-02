@@ -47,6 +47,10 @@ class CapabilitySelector:
                 "RESEARCH"
             ],
 
+            "MARKETING": [
+                "MARKETING"
+            ],
+
             "IMAGE": [
                 "IMAGE"
             ],

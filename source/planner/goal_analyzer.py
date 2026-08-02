@@ -91,4 +91,19 @@ class GoalAnalyzer:
         ):
             return "RESEARCH"
 
+
+        if any(
+            word in text
+            for word in [
+                "iklan",
+                "promosi",
+                "produk",
+                "jualan",
+                "marketing",
+                "advertisement",
+                "copywriting"
+            ]
+        ):
+            return "MARKETING"
+
         return "GENERAL"
