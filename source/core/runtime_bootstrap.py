@@ -1,10 +1,10 @@
 """
 RanZiz AI Runtime Bootstrap
-Version 1.0
+Version 2.0
 """
 
 
-from source.runtime.factory.runtime_factory import RuntimeFactory
+from source.runtime.builder.runtime_builder import RuntimeBuilder
 
 
 class RuntimeBootstrap:
@@ -14,27 +14,20 @@ class RuntimeBootstrap:
 
         self,
 
-        context_pipeline,
+        context_pipeline=None,
 
-        decision_pipeline,
+        decision_pipeline=None,
 
-        memory_pipeline,
+        memory_pipeline=None,
 
-        capability_pipeline
+        capability_pipeline=None
 
     ):
 
-        self.runtime = RuntimeFactory.create(
+        self.builder = RuntimeBuilder()
 
-            context_pipeline,
+        self.runtime = self.builder.build()
 
-            decision_pipeline,
-
-            memory_pipeline,
-
-            capability_pipeline
-
-        )
 
 
     def get_runtime(self):
