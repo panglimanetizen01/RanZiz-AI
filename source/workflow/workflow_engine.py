@@ -1,239 +1,116 @@
 """
 RanZiz AI Workflow Engine
-Version 5.1
+Version 2.0
 """
 
-from source.capability.capability_executor import CapabilityExecutor
-from source.capability.capability_loader import CapabilityLoader
 from source.capability.capability_registry import CapabilityRegistry
-from source.events.event import Event
-from source.events.event_manager import EventManager
-from source.events.trace_events import TraceEvents
-from source.workflow.workflow_context import WorkflowContext
+from source.capability.capability_router import CapabilityRouter
 
 
 class WorkflowEngine:
 
-    MAX_TASKS = 100
 
-    def __init__(self, executor=None):
-
-        self.executor = executor
-
-        self.context = WorkflowContext()
-
-        self.registry = CapabilityRegistry()
-
-        self.events = EventManager()
-
-        loader = CapabilityLoader()
-
-        executors = loader.load()
-
-        for name, capability in executors.items():
-
-            self.registry.register(
-                name,
-                capability
-            )
-
-        self.capability_executor = CapabilityExecutor(
-            self.registry
-        )
-
-    def validate_workflow(self, workflow):
-
-        if workflow is None:
-            return False
-
-        if not hasattr(
-            workflow,
-            "name"
-        ):
-            return False
-
-        return hasattr(
-            workflow,
-            "get_tasks"
-        )
-
-    def validate_task(self, task):
-
-        if task is None:
-            return False
-
-        if not hasattr(
-            task,
-            "payload"
-        ):
-            return False
-
-        return isinstance(
-            task.payload,
-            dict
-        )
-
-    def run(
+    def __init__(
         self,
-        workflow,
-        context=None
+        registry=None
     ):
 
-        if not self.validate_workflow(
-            workflow
-        ):
+        if registry is None:
 
-            raise TypeError(
-                "Workflow tidak valid"
+            self.router = CapabilityRouter()
+
+            self.registry = self.router.registry
+
+        else:
+
+            self.registry = registry
+
+
+
+    def available(self):
+
+        return self.registry.list()
+
+
+
+    def resolve(
+        self,
+        workflow
+    ):
+
+        result = []
+
+
+        for item in workflow:
+
+            executor = self.registry.get(
+                item
             )
 
-        tasks = workflow.get_tasks()
 
-        if len(tasks) > self.MAX_TASKS:
+            if executor is not None:
 
-            raise ValueError(
-                "Jumlah task melebihi batas workflow"
-            )
-
-        self.context.clear()
-
-        request_id = None
-
-        if context is not None:
-
-            request_id = context.get_id()
-
-            self.context.set(
-                "request_id",
-                request_id
-            )
-
-            context.log(
-                TraceEvents.WORKFLOW_STARTED,
-                {
-                    "workflow": workflow.name
-                }
-            )
-
-        self.events.publish(
-
-            Event(
-
-                "workflow.started",
-
-                {
-                    "workflow": workflow.name,
-                    "request_id": request_id
-                }
-
-            )
-
-        )
-
-        results = []
-
-        for task in tasks:
-
-            if not self.validate_task(
-                task
-            ):
-
-                raise TypeError(
-                    "Task workflow tidak valid"
+                result.append(
+                    executor
                 )
 
-            # ==================================================
-            # Sinkronkan workflow context ke payload executor
-            # ==================================================
 
-            task.payload["context"] = self.context.all()
-
-            task.payload["workflow_context"] = self.context
-
-            task.payload["request_context"] = context
-
-            result = self.capability_executor.execute(
-                task
-            )
-
-            self.context.set(
-                task.name,
-                result.output
-            )
-
-            results.append(
-                result.to_dict()
-            )
-
-        if context is not None:
-
-            context.log(
-                TraceEvents.WORKFLOW_FINISHED,
-                {
-                    "workflow": workflow.name
-                }
-            )
-
-        self.events.publish(
-
-            Event(
-
-                "workflow.finished",
-
-                {
-                    "workflow": workflow.name,
-                    "request_id": request_id
-                }
-
-            )
-
-        )
-
-        return {
-
-            "workflow": workflow.name,
-
-            "request_id": request_id,
-
-            "context": self.context.all(),
-
-            "results": results,
-
-            "output": self._build_output(results)
-
-        }
+        return result
 
 
-    def _build_output(
+
+    def execute(
         self,
-        results
+        workflow,
+        payload
     ):
 
-        output = []
+        results = {}
 
-        for item in results:
 
-            if not isinstance(
-                item,
-                dict
-            ):
+        for name in workflow:
+
+            executor = self.registry.get(
+                name
+            )
+
+
+            if executor is None:
+
+                results[name] = {
+                    "error": "Capability tidak ditemukan"
+                }
+
                 continue
 
-            capability = item.get(
-                "capability",
-                ""
-            )
 
-            data = item.get(
-                "output",
-                ""
-            )
+            try:
 
-            output.append(
-                f"{capability}\n\n{data}"
-            )
+                results[name] = executor.execute(
+                    payload
+                )
 
 
-        return "\n\n".join(
-            output
+            except Exception as error:  # noqa: BLE001
+
+                results[name] = {
+                    "error": str(error)
+                }
+
+
+        return results
+
+
+
+    def count(self):
+
+        return self.registry.count()
+
+
+
+    def __repr__(self):
+
+        return (
+            f"WorkflowEngine("
+            f"{self.count()} capabilities)"
         )

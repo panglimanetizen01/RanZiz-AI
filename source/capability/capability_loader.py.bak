@@ -1,6 +1,6 @@
 """
 RanZiz AI Capability Loader
-Version 3.1
+Version 2.1
 """
 
 import importlib
@@ -15,28 +15,14 @@ class CapabilityLoader:
 
     def load(self):
 
-        result = self.load_with_metadata()
-
-        return {
-            name: item["executor"]
-            for name, item in result.items()
-        }
-
-
-
-    def load_with_metadata(self):
-
         executors = {}
 
         package = "source.capability.executors"
 
-
         for _, module_name, _ in pkgutil.iter_modules(__path__):
 
             if not module_name.endswith("_executor"):
-
                 continue
-
 
             try:
 
@@ -44,127 +30,48 @@ class CapabilityLoader:
                     f"{package}.{module_name}"
                 )
 
-
                 for name in dir(module):
 
-                    obj = getattr(
-                        module,
-                        name
-                    )
+                    obj = getattr(module, name)
 
-
-                    if not isinstance(
-                        obj,
-                        type
-                    ):
-
+                    if not isinstance(obj, type):
                         continue
-
 
                     if name.startswith("Base"):
-
                         continue
-
 
                     if not name.endswith("Executor"):
-
                         continue
-
 
                     if not issubclass(
                         obj,
                         BaseCapabilityExecutor
                     ):
-
                         continue
-
 
                     instance = obj()
 
-
-                    capability_name = self.get_name(
-                        instance,
-                        name
+                    capability = self.normalize(
+                        name.replace(
+                            "Executor",
+                            ""
+                        )
                     )
 
+                    executors[capability] = instance
 
-                    info = None
-
-                    if hasattr(
-                        instance,
-                        "metadata"
-                    ):
-
-                        try:
-
-                            info = instance.metadata()
-
-                        except Exception:
-
-                            info = None
-
-
-                    executors[capability_name] = {
-
-                        "executor": instance,
-
-                        "info": info
-
-                    }
-
-
-            except Exception as error:
-
+            except Exception as error:  # noqa: BLE001
+                # Capability loading is isolated; one failed capability must not stop the runtime.
                 print(
                     "Capability gagal dimuat:",
                     module_name,
                     error
                 )
 
-
         return executors
 
 
-
-    def get_name(
-        self,
-        executor,
-        class_name
-    ):
-
-
-        if hasattr(
-            executor,
-            "metadata"
-        ):
-
-            try:
-
-                info = executor.metadata()
-
-                if info:
-
-                    return info.name
-
-
-            except Exception:
-
-                pass
-
-
-        return self.normalize(
-            class_name.replace(
-                "Executor",
-                ""
-            )
-        )
-
-
-
-    def normalize(
-        self,
-        name
-    ):
+    def normalize(self, name):
 
         mapping = {
 
@@ -189,7 +96,6 @@ class CapabilityLoader:
             "Script": "Script Engine",
 
         }
-
 
         return mapping.get(
             name,

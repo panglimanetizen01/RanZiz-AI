@@ -5,63 +5,16 @@ Version 2.0
 
 from collections import defaultdict
 
-from source.capability.capability_loader import CapabilityLoader
-from source.capability.capability_registry import CapabilityRegistry
-from source.capability.catalog.capability_catalog import CapabilityCatalog
+from source.capability.catalog.catalog_service import CatalogService
 
 
 class CapabilityService:
 
+
     def __init__(self):
 
-        self.registry = CapabilityRegistry()
+        self.catalog = CatalogService()
 
-        self.catalog = CapabilityCatalog()
-
-        self.load()
-
-
-    def load(self):
-
-        loader = CapabilityLoader()
-
-        capabilities = loader.load()
-
-        for name, executor in capabilities.items():
-
-            self.registry.register(
-                name,
-                executor
-            )
-
-        self.catalog.add_many(
-            self.registry.executors.values()
-        )
-
-
-    def get(
-        self,
-        name
-    ):
-
-        return self.registry.get(
-            name
-        )
-
-
-    def info(
-        self,
-        name
-    ):
-
-        return self.registry.info(
-            name
-        )
-
-
-    def count(self):
-
-        return self.registry.count()
 
 
     def all(self):
@@ -69,14 +22,17 @@ class CapabilityService:
         return self.catalog.list()
 
 
+
+    def count(self):
+
+        return self.catalog.count()
+
+
+
     def summary(self):
 
-        capabilities = self.catalog.list()
+        return self.catalog.summary()
 
-        return {
-            "count": len(capabilities),
-            "capabilities": capabilities
-        }
 
 
     def describe(self):
@@ -84,11 +40,24 @@ class CapabilityService:
         return self.summary()["capabilities"]
 
 
+
+    def find(
+        self,
+        keyword
+    ):
+
+        return self.catalog.find(
+            keyword
+        )
+
+
+
     def text(self):
 
         summary = self.summary()
 
         groups = defaultdict(list)
+
 
         for item in summary["capabilities"]:
 
@@ -98,6 +67,7 @@ class CapabilityService:
 
 
         lines = []
+
 
         lines.append(
             f"RanZiz AI memiliki {summary['count']} capability.\n"
@@ -126,6 +96,7 @@ class CapabilityService:
 
 
         return "\n".join(lines)
+
 
 
     def __repr__(self):

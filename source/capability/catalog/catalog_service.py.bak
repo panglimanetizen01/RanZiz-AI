@@ -1,9 +1,10 @@
 """
 RanZiz AI Capability Catalog Service
-Version 1.2
+Version 2.0
 """
 
 from source.capability.capability_loader import CapabilityLoader
+from source.capability.capability_registry import CapabilityRegistry
 from source.capability.catalog.capability_catalog import CapabilityCatalog
 
 
@@ -13,7 +14,10 @@ class CatalogService:
 
         self.catalog = CapabilityCatalog()
 
+        self.registry = CapabilityRegistry()
+
         self.load()
+
 
     def load(self):
 
@@ -21,13 +25,22 @@ class CatalogService:
 
         executors = loader.load()
 
+        for name, executor in executors.items():
+
+            self.registry.register(
+                name,
+                executor
+            )
+
         self.catalog.add_many(
-            executors.values()
+            self.registry.executors.values()
         )
+
 
     def list(self):
 
         return self.catalog.list()
+
 
     def find(
         self,
@@ -38,6 +51,7 @@ class CatalogService:
             keyword
         )
 
+
     def summary(self):
 
         capabilities = self.catalog.list()
@@ -46,3 +60,16 @@ class CatalogService:
             "count": len(capabilities),
             "capabilities": capabilities
         }
+
+
+    def count(self):
+
+        return self.registry.count()
+
+
+    def __repr__(self):
+
+        return (
+            f"CatalogService("
+            f"{self.count()} capabilities)"
+        )

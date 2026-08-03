@@ -3,43 +3,36 @@ RanZiz AI Capability Catalog Service
 Version 2.0
 """
 
-from source.capability.capability_loader import CapabilityLoader
-from source.capability.capability_registry import CapabilityRegistry
-from source.capability.catalog.capability_catalog import CapabilityCatalog
+from source.capability.capability_router import CapabilityRouter
 
 
 class CatalogService:
 
+
     def __init__(self):
 
-        self.catalog = CapabilityCatalog()
+        self.router = CapabilityRouter()
 
-        self.registry = CapabilityRegistry()
-
-        self.load()
-
-
-    def load(self):
-
-        loader = CapabilityLoader()
-
-        executors = loader.load()
-
-        for name, executor in executors.items():
-
-            self.registry.register(
-                name,
-                executor
-            )
-
-        self.catalog.add_many(
-            self.registry.executors.values()
-        )
 
 
     def list(self):
 
-        return self.catalog.list()
+        result = []
+
+        for name in self.router.available():
+
+            info = self.router.info(
+                name
+            )
+
+            if info is not None:
+
+                result.append(
+                    info
+                )
+
+        return result
+
 
 
     def find(
@@ -47,24 +40,51 @@ class CatalogService:
         keyword
     ):
 
-        return self.catalog.search(
-            keyword
-        )
+        keyword = keyword.lower()
+
+        results = []
+
+
+        for item in self.list():
+
+            text = (
+                item["name"]
+                + " "
+                + item["category"]
+                + " "
+                + item["description"]
+            ).lower()
+
+
+            if keyword in text:
+
+                results.append(
+                    item
+                )
+
+
+        return results
+
 
 
     def summary(self):
 
-        capabilities = self.catalog.list()
+        capabilities = self.list()
 
         return {
+
             "count": len(capabilities),
+
             "capabilities": capabilities
+
         }
+
 
 
     def count(self):
 
-        return self.registry.count()
+        return self.router.count()
+
 
 
     def __repr__(self):

@@ -1,6 +1,6 @@
 """
 RanZiz AI Task Executor
-Version 2.1
+Version 3.0
 """
 
 from source.capability.capability_executor import CapabilityExecutor
@@ -10,6 +10,7 @@ from source.tasks.task import Task
 
 
 class TaskExecutor:
+
 
     def __init__(
         self,
@@ -24,11 +25,14 @@ class TaskExecutor:
                 registry
             )
 
+
         self.registry = registry
+
 
         self.executor = CapabilityExecutor(
             self.registry
         )
+
 
 
     def load_capabilities(
@@ -38,14 +42,21 @@ class TaskExecutor:
 
         loader = CapabilityLoader()
 
-        capabilities = loader.load()
+        capabilities = loader.load_with_metadata()
 
-        for name, executor in capabilities.items():
+
+        for name, item in capabilities.items():
 
             registry.register(
+
                 name,
-                executor
+
+                item["executor"],
+
+                item["info"]
+
             )
+
 
 
     def execute(
@@ -65,4 +76,25 @@ class TaskExecutor:
 
         return self.executor.execute(
             task
+        )
+
+
+
+    def available(self):
+
+        return self.registry.list()
+
+
+
+    def count(self):
+
+        return self.registry.count()
+
+
+
+    def __repr__(self):
+
+        return (
+            f"TaskExecutor("
+            f"{self.count()} capabilities)"
         )

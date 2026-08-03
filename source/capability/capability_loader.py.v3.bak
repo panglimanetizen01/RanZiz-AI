@@ -1,6 +1,6 @@
 """
 RanZiz AI Capability Loader
-Version 3.1
+Version 3.0
 """
 
 import importlib
@@ -14,17 +14,6 @@ class CapabilityLoader:
 
 
     def load(self):
-
-        result = self.load_with_metadata()
-
-        return {
-            name: item["executor"]
-            for name, item in result.items()
-        }
-
-
-
-    def load_with_metadata(self):
 
         executors = {}
 
@@ -88,29 +77,7 @@ class CapabilityLoader:
                     )
 
 
-                    info = None
-
-                    if hasattr(
-                        instance,
-                        "metadata"
-                    ):
-
-                        try:
-
-                            info = instance.metadata()
-
-                        except Exception:
-
-                            info = None
-
-
-                    executors[capability_name] = {
-
-                        "executor": instance,
-
-                        "info": info
-
-                    }
+                    executors[capability_name] = instance
 
 
             except Exception as error:
@@ -165,6 +132,7 @@ class CapabilityLoader:
         self,
         name
     ):
+
 
         mapping = {
 

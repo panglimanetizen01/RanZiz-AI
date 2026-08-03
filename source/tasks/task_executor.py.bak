@@ -1,6 +1,6 @@
 """
 RanZiz AI Task Executor
-Version 2.0
+Version 2.1
 """
 
 from source.capability.capability_executor import CapabilityExecutor
@@ -11,36 +11,52 @@ from source.tasks.task import Task
 
 class TaskExecutor:
 
+    def __init__(
+        self,
+        registry=None
+    ):
 
-    def __init__(self):
+        if registry is None:
 
-        self.registry = CapabilityRegistry()
+            registry = CapabilityRegistry()
 
-        self.load_capabilities()
+            self.load_capabilities(
+                registry
+            )
+
+        self.registry = registry
 
         self.executor = CapabilityExecutor(
             self.registry
         )
 
 
-    def load_capabilities(self):
+    def load_capabilities(
+        self,
+        registry
+    ):
 
         loader = CapabilityLoader()
 
         capabilities = loader.load()
 
-
         for name, executor in capabilities.items():
 
-            self.registry.register(
+            registry.register(
                 name,
                 executor
             )
 
 
-    def execute(self, task):
+    def execute(
+        self,
+        task
+    ):
 
-        if not isinstance(task, Task):
+        if not isinstance(
+            task,
+            Task
+        ):
 
             raise TypeError(
                 "task harus berupa Task"

@@ -9,7 +9,6 @@ from source.capability.capability_registry import CapabilityRegistry
 
 class CapabilityRouter:
 
-
     def __init__(self):
 
         self.loader = CapabilityLoader()
@@ -19,24 +18,16 @@ class CapabilityRouter:
         self.load()
 
 
-
     def load(self):
 
-        capabilities = self.loader.load_with_metadata()
+        executors = self.loader.load()
 
-
-        for name, item in capabilities.items():
+        for name, executor in executors.items():
 
             self.registry.register(
-
                 name,
-
-                item["executor"],
-
-                item["info"]
-
+                executor
             )
-
 
 
     def resolve(
@@ -46,13 +37,11 @@ class CapabilityRouter:
 
         results = []
 
-
         for capability in capabilities:
 
             executor = self.registry.get(
                 capability
             )
-
 
             if executor is not None:
 
@@ -60,15 +49,12 @@ class CapabilityRouter:
                     executor
                 )
 
-
         return results
-
 
 
     def available(self):
 
         return self.registry.list()
-
 
 
     def info(
@@ -81,11 +67,9 @@ class CapabilityRouter:
         )
 
 
-
     def count(self):
 
         return self.registry.count()
-
 
 
     def __repr__(self):

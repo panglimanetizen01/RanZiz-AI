@@ -1,29 +1,22 @@
 """
 RanZiz AI Agent Manager
-Version 3.2
+Version 2.0
 """
 
-
-from source.agents.agent_loader import AgentLoader
 from source.agents.registry.agent_registry import AgentRegistry
-from source.agents.router.agent_router import AgentRouter
 
 
 class AgentManager:
 
 
+    def __init__(
+        self,
+        registry=None
+    ):
 
-    def __init__(self):
+        self.registry = registry or AgentRegistry()
 
-        self.loader = AgentLoader()
-
-        self.registry = AgentRegistry()
-
-
-        self.router = AgentRouter(
-            self
-        )
-
+        self.agents = {}
 
         self.load()
 
@@ -31,73 +24,60 @@ class AgentManager:
 
     def load(self):
 
-        agents = self.loader.load()
+        """
+        Agent loader placeholder.
+        Agent capability integration menggunakan registry.
+        """
 
-
-        for name, agent in agents.items():
-
-            self.registry.register(
-                name,
-                agent
-            )
+        return self.agents
 
 
 
-    def execute(
-
+    def register(
         self,
-
-        message,
-
-        context=None
-
+        name,
+        agent
     ):
 
+        self.agents[name] = agent
 
-        agent_name = self.router.route(
-
-            message,
-
-            context
-
+        self.registry.register(
+            name,
+            agent
         )
 
 
-        agent = self.registry.get(
-            agent_name
+
+    def get(
+        self,
+        name
+    ):
+
+        return self.agents.get(
+            name
         )
-
-
-        if agent:
-
-
-            try:
-
-                return agent.execute(
-                    message,
-                    context
-                )
-
-
-            except TypeError:
-
-                return agent.execute(
-                    message
-                )
-
-
-        return None
 
 
 
     def list(self):
 
-        return self.registry.list()
+        return list(
+            self.agents.keys()
+        )
 
 
 
-    def get(self, name):
+    def count(self):
 
-        return self.registry.get(
-            name
+        return len(
+            self.agents
+        )
+
+
+
+    def __repr__(self):
+
+        return (
+            f"AgentManager("
+            f"{self.count()} agents)"
         )
