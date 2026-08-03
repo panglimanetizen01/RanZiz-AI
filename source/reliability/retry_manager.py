@@ -69,6 +69,11 @@ class RetryManager:
 
         last_error = None
 
+        capability = kwargs.pop(
+            "capability",
+            "unknown"
+        )
+
 
 
         while attempts < self.max_retry:
@@ -82,7 +87,8 @@ class RetryManager:
                 "retry.attempt",
 
                 {
-                    "attempt": attempts
+                    "attempt": attempts,
+                    "capability": capability
                 }
 
             )

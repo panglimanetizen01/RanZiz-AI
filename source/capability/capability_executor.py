@@ -172,7 +172,9 @@ class CapabilityExecutor:
 
             executor.execute,
 
-            task.payload
+            task.payload,
+
+            capability=task.capability
 
         )
 
