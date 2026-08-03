@@ -183,6 +183,16 @@ class CapabilityExecutor:
             task.finish()
 
 
+            if request_context:
+
+                request_context.log(
+                    TraceEvents.CAPABILITY_FINISHED,
+                    {
+                        "capability": task.capability
+                    }
+                )
+
+
             result = CapabilityResult(
 
                 task.capability,

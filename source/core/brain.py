@@ -156,6 +156,8 @@ class Brain:
     ):
         context = RequestContext()
 
+        self.last_context = context
+
         context.log(
             TraceEvents.REQUEST_CREATED,
             {
