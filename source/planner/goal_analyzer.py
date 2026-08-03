@@ -1,6 +1,6 @@
 """
 RanZiz AI Goal Analyzer
-Version 2.1
+Version 2.2
 """
 
 
@@ -10,100 +10,142 @@ class GoalAnalyzer:
 
         text = text.lower()
 
-        if any(
-            word in text
-            for word in [
-                "lagu",
-                "musik",
-                "dangdut",
-                "pop",
-                "rock",
-                "lirik"
-            ]
-        ):
-            return "MUSIC"
+        groups = [
 
-        if any(
-            word in text
-            for word in [
-                "video",
-                "film",
-                "animasi"
-            ]
-        ):
-            return "VIDEO"
+            (
+                "MUSIC",
+                [
+                    "lagu",
+                    "musik",
+                    "dangdut",
+                    "pop",
+                    "rock",
+                    "lirik"
+                ]
+            ),
 
-        if any(
-            word in text
-            for word in [
-                "gambar",
-                "foto",
-                "logo",
-                "ikon",
-                "icon",
-                "poster",
-                "banner",
-                "desain",
-                "design",
-                "image"
-            ]
-        ):
-            return "IMAGE"
+            (
+                "VIDEO",
+                [
+                    "video",
+                    "film",
+                    "animasi"
+                ]
+            ),
 
-        if any(
-            word in text
-            for word in [
-                "website",
-                "web",
-                "html",
-                "css",
-                "javascript",
-                "js"
-            ]
-        ):
-            return "WEBSITE"
+            (
+                "IMAGE",
+                [
+                    "gambar",
+                    "foto",
+                    "logo",
+                    "ikon",
+                    "icon",
+                    "poster",
+                    "banner",
+                    "desain",
+                    "design",
+                    "image"
+                ]
+            ),
 
-        if any(
-            word in text
-            for word in [
-                "aplikasi",
-                "program",
-                "python",
-                "java",
-                "kotlin",
-                "coding",
-                "kode"
-            ]
-        ):
-            return "APPLICATION"
+            (
+                "WEBSITE",
+                [
+                    "website",
+                    "web",
+                    "html",
+                    "css",
+                    "javascript",
+                    "js"
+                ]
+            ),
 
-        if any(
-            word in text
-            for word in [
-                "cari",
-                "riset",
-                "penelitian",
-                "sejarah",
-                "informasi",
-                "analisis",
-                "research"
-            ]
-        ):
-            return "RESEARCH"
+            (
+                "APPLICATION",
+                [
+                    "aplikasi",
+                    "program",
+                    "python",
+                    "java",
+                    "kotlin",
+                    "coding",
+                    "kode"
+                ]
+            ),
 
+            (
+                "DOCUMENT",
+                [
+                    "dokumen",
+                    "document",
+                    "pdf",
+                    "docx",
+                    "word",
+                    "laporan",
+                    "proposal",
+                    "presentasi",
+                    "ppt",
+                    "excel",
+                    "xlsx"
+                ]
+            ),
 
-        if any(
-            word in text
-            for word in [
-                "iklan",
-                "promosi",
-                "produk",
-                "jualan",
-                "marketing",
-                "advertisement",
-                "copywriting"
-            ]
-        ):
-            return "MARKETING"
+            (
+                "VISION",
+                [
+                    "analisis gambar",
+                    "deteksi gambar",
+                    "vision",
+                    "ocr",
+                    "scan gambar",
+                    "baca gambar"
+                ]
+            ),
+
+            (
+                "VOICE",
+                [
+                    "suara",
+                    "voice",
+                    "tts",
+                    "text to speech",
+                    "pidato",
+                    "narasi"
+                ]
+            ),
+
+            (
+                "RESEARCH",
+                [
+                    "cari",
+                    "riset",
+                    "penelitian",
+                    "sejarah",
+                    "informasi",
+                    "analisis",
+                    "research"
+                ]
+            ),
+
+            (
+                "MARKETING",
+                [
+                    "iklan",
+                    "promosi",
+                    "produk",
+                    "jualan",
+                    "marketing",
+                    "advertisement",
+                    "copywriting"
+                ]
+            )
+
+        ]
+
+        for goal, keywords in groups:
+
+            if any(word in text for word in keywords):
+                return goal
 
         return "GENERAL"

@@ -1,6 +1,6 @@
 """
 RanZiz AI Intent Analyzer
-Version 1.0
+Version 2.0
 """
 
 
@@ -10,13 +10,83 @@ class IntentAnalyzer:
 
         text = text.lower().strip()
 
-        if text.startswith("buat"):
-            return "CREATE"
+        mapping = [
 
-        if text.startswith("cari"):
-            return "SEARCH"
+            (
+                "CREATE",
+                [
+                    "buat",
+                    "buatkan",
+                    "generate",
+                    "ciptakan",
+                    "tulis"
+                ]
+            ),
 
-        if text.startswith("jelaskan"):
-            return "ASK"
+            (
+                "EDIT",
+                [
+                    "edit",
+                    "ubah",
+                    "perbaiki",
+                    "revisi",
+                    "rapikan"
+                ]
+            ),
+
+            (
+                "SEARCH",
+                [
+                    "cari",
+                    "temukan",
+                    "search",
+                    "lookup"
+                ]
+            ),
+
+            (
+                "ANALYZE",
+                [
+                    "analisis",
+                    "analisa",
+                    "review",
+                    "audit",
+                    "cek"
+                ]
+            ),
+
+            (
+                "TRANSLATE",
+                [
+                    "terjemahkan",
+                    "translate"
+                ]
+            ),
+
+            (
+                "SUMMARIZE",
+                [
+                    "ringkas",
+                    "rangkuman",
+                    "summary"
+                ]
+            ),
+
+            (
+                "EXPLAIN",
+                [
+                    "jelaskan",
+                    "mengapa",
+                    "kenapa",
+                    "bagaimana"
+                ]
+            )
+
+        ]
+
+        for intent, keywords in mapping:
+
+            if any(text.startswith(word) for word in keywords):
+                return intent
 
         return "CHAT"
