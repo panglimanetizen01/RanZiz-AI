@@ -1,6 +1,6 @@
 """
 RanZiz AI Runtime Handler
-Version 1.1
+Version 2.0
 """
 
 
@@ -30,18 +30,18 @@ class RuntimeHandler:
         if result is not None:
             return result
 
-        provider = getattr(
-            decision,
-            "provider",
-            None
-        )
+        context = None
 
-        if provider:
-            return self.runtime.ask_with_provider(
-                provider,
-                message
-            )
+        if decision is not None:
+            context = {
+                "provider": getattr(
+                    decision,
+                    "provider",
+                    None
+                )
+            }
 
-        return self.runtime.ask(
-            message
+        return self.runtime.process(
+            message,
+            context
         )
