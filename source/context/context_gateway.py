@@ -108,6 +108,49 @@ class ContextGateway:
 
 
 
+    def get_id(self):
+
+        return self.manager.get(
+            "request_id",
+            None
+        )
+
+
+
+    def log(
+
+        self,
+
+        event,
+
+        data=None
+
+    ):
+
+        self.manager.set(
+
+            "last_event",
+
+            {
+                "event": str(event),
+                "data": data
+            }
+
+        )
+
+        return True
+
+
+
+    def get_trace(self):
+
+        return self.manager.get(
+            "trace",
+            []
+        )
+
+
+
     def all(self):
 
         return self.manager.all()
