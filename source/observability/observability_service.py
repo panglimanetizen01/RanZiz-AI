@@ -10,6 +10,7 @@ from source.logging.request_summary import RequestSummary
 from source.logging.trace_analyzer import TraceAnalyzer
 from source.logging.trace_storage import TraceStorage
 from source.observability.diagnostic_engine import DiagnosticEngine
+from source.observability.trace_viewer import TraceViewer
 
 
 class ObservabilityService:
@@ -29,6 +30,8 @@ class ObservabilityService:
         self.health = HealthMonitor()
 
         self.diagnostic = DiagnosticEngine()
+
+        self.viewer = TraceViewer()
 
 
 
@@ -96,6 +99,10 @@ class ObservabilityService:
 
         )
 
+        timeline = self.viewer.render(
+            trace
+        )
+
 
 
         return {
@@ -113,7 +120,9 @@ class ObservabilityService:
             "report": report,
 
 
-            "diagnosis": diagnosis
+            "diagnosis": diagnosis,
+
+            "timeline": timeline
 
         }
 
