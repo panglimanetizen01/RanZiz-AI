@@ -90,6 +90,23 @@ class AgentManager:
 
 
 
+    def set_executor(
+        self,
+        executor
+    ):
+
+        for agent in self.registry.all().values():
+
+            if hasattr(
+                agent,
+                "set_executor"
+            ):
+
+                agent.set_executor(
+                    executor
+                )
+
+
     def list(self):
 
         return self.registry.list()

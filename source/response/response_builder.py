@@ -1,6 +1,6 @@
 """
 RanZiz AI Response Builder
-Version 1.2
+Version 1.3
 """
 
 
@@ -14,9 +14,6 @@ class ResponseBuilder:
         response,
         observability=None
     ):
-
-
-
 
         result = response
 
@@ -42,12 +39,40 @@ class ResponseBuilder:
                         dict
                     ):
 
-                        outputs.append(
-                            item.get(
-                                "output",
-                                ""
-                            )
+                        output = item.get(
+                            "output",
+                            ""
                         )
+
+                        if isinstance(
+                            output,
+                            dict
+                        ):
+                            output = str(
+                                output
+                            )
+
+                        outputs.append(
+                            output
+                        )
+
+                result = "\n\n".join(
+                    outputs
+                )
+
+
+            elif "result" in response and isinstance(
+                response["result"],
+                dict
+            ):
+
+                outputs = []
+
+                for name, value in response["result"].items():
+
+                    outputs.append(
+                        f"{name}\n\n{value}"
+                    )
 
                 result = "\n\n".join(
                     outputs

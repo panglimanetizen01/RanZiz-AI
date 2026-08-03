@@ -52,7 +52,8 @@ class TaskPlanner:
         )
 
         capabilities = self.selector.select(
-            goal
+            goal,
+            text
         )
 
         task_type = (

@@ -53,6 +53,10 @@ class Brain:
         self.planner = TaskPlanner()
         self.executor = Executor()
 
+        self.agents.set_executor(
+            self.executor
+        )
+
         self.sessions = SessionManager()
         self.pipeline = PipelineManager()
 

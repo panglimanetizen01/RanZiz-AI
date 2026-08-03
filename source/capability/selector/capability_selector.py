@@ -14,7 +14,8 @@ class CapabilitySelector:
 
     def select(
         self,
-        goal
+        goal,
+        text=None
     ):
 
         goal = str(goal).upper()
@@ -66,6 +67,28 @@ class CapabilitySelector:
             ]
 
         }
+
+        # Video musik membutuhkan pipeline lengkap:
+        # Lyric -> Composer -> Audio -> Video
+        if (
+            goal == "VIDEO"
+            and text is not None
+            and any(
+                word in str(text).lower()
+                for word in [
+                    "lagu",
+                    "musik",
+                    "lirik"
+                ]
+            )
+        ):
+            return [
+                "Lyric Engine",
+                "Composer",
+                "Audio Engine",
+                "Video Engine"
+            ]
+
 
         allowed = category_map.get(
             goal,

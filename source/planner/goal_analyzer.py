@@ -10,6 +10,18 @@ class GoalAnalyzer:
 
         text = text.lower()
 
+        # Prioritas creator workflow:
+        # video + lagu/musik/lirik = VIDEO (bukan MUSIC)
+        if "video" in text and any(
+            word in text
+            for word in [
+                "lagu",
+                "musik",
+                "lirik"
+            ]
+        ):
+            return "VIDEO"
+
         groups = [
 
             (

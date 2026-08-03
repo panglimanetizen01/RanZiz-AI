@@ -17,6 +17,17 @@ class MusicAgent:
 
 
 
+    def set_executor(
+        self,
+        executor
+    ):
+
+        self.orchestrator = WorkflowOrchestrator(
+            executor
+        )
+
+
+
     def can_handle(
         self,
         message
