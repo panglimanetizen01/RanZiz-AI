@@ -158,11 +158,11 @@ class WorkflowEngine:
 
             self.context.set(
                 task.name,
-                result.output
+                result
             )
 
             results.append(
-                result.to_dict()
+                result
             )
 
         if context is not None:
@@ -213,21 +213,36 @@ class WorkflowEngine:
 
         for item in results:
 
-            if not isinstance(
+            if hasattr(
+                item,
+                "capability"
+            ):
+
+                capability = item.capability
+
+                data = item.output
+
+
+            elif isinstance(
                 item,
                 dict
             ):
+
+                capability = item.get(
+                    "capability",
+                    ""
+                )
+
+                data = item.get(
+                    "output",
+                    ""
+                )
+
+
+            else:
+
                 continue
 
-            capability = item.get(
-                "capability",
-                ""
-            )
-
-            data = item.get(
-                "output",
-                ""
-            )
 
             output.append(
                 f"{capability}\n\n{data}"

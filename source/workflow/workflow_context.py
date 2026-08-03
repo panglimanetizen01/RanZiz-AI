@@ -18,7 +18,16 @@ class WorkflowContext:
         value
     ):
 
-        self.data[key] = value
+        if hasattr(
+            value,
+            "output"
+        ):
+
+            self.data[key] = value.output
+
+        else:
+
+            self.data[key] = value
 
 
     def get(
