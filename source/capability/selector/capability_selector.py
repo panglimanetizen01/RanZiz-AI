@@ -113,6 +113,45 @@ class CapabilitySelector:
 
         }
 
+        def resolve_dependencies(
+            names
+        ):
+
+            resolved = []
+
+            def add(name):
+
+                if name in resolved:
+                    return
+
+                item = self.catalog.get(
+                    name
+                )
+
+                if item:
+
+                    for req in item.get(
+                        "requires",
+                        []
+                    ):
+                        add(req)
+
+                resolved.append(
+                    name
+                )
+
+
+            for name in names:
+                add(name)
+
+            return resolved
+
+
+        capabilities = resolve_dependencies(
+            capabilities
+        )
+
+
         capabilities.sort(
             key=lambda x: dependency_order.get(
                 x,

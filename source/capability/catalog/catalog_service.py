@@ -29,6 +29,16 @@ class CatalogService:
 
         return self.catalog.list()
 
+    def get(
+        self,
+        name
+    ):
+
+        return self.catalog.get(
+            name
+        )
+
+
     def find(
         self,
         keyword
