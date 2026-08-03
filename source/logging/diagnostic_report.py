@@ -61,6 +61,31 @@ class DiagnosticReport:
             )
 
 
+        metrics = summary.get(
+            "metrics",
+            {}
+        )
+
+        durations = metrics.get(
+            "capability_duration",
+            {}
+        )
+
+        if durations:
+
+            lines.append("")
+
+            lines.append(
+                "Performance"
+            )
+
+            for capability, duration in durations.items():
+
+                lines.append(
+                    f"  {capability} : {duration} ms"
+                )
+
+
         if diagnosis is not None:
 
 

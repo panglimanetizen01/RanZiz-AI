@@ -35,6 +35,11 @@ class RequestSummary:
 
             "total_errors": len(
                 analysis["errors"]
+            ),
+
+            "metrics": analysis.get(
+                "metrics",
+                {}
             )
 
         }
