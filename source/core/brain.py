@@ -91,9 +91,9 @@ class Brain:
             self.agents
         )
 
-        self.router_handler = RouterHandler(
-            self.router
-        )
+        # WorkflowRouter legacy disabled.
+        # Runtime pipeline handles execution.
+        self.router_handler = None
 
         self.load_plugins()
 
@@ -267,16 +267,17 @@ class Brain:
 
 
 
-        router_result = self.router_handler.handle(
-            message,
-            session,
-            context,
-            self.build_response
-        )
+        if self.router_handler is not None:
 
+            router_result = self.router_handler.handle(
+                message,
+                session,
+                context,
+                self.build_response
+            )
 
-        if router_result is not None:
-            return router_result
+            if router_result is not None:
+                return router_result
 
 
         result = self.execution_handler.execute(
