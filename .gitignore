@@ -55,3 +55,26 @@ doctor_*.txt
 ruf*.txt
 runtime*_bundle.txt
 database.json.bak
+
+# Backup / temporary files
+*.bak
+*.orig
+*.rej
+*.tmp
+*.temp
+
+# Python virtual environment
+.venv/
+venv/
+
+# Editor
+.vscode/
+.idea/
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# Local runtime
+*.log
