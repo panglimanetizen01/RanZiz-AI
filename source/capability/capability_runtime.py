@@ -12,6 +12,7 @@ from source.runtime.retry.retry_executor import RetryExecutor
 from source.runtime.retry.retry_policy import RetryPolicy
 from source.runtime.state.runtime_state import RuntimeState
 from source.runtime.trace.runtime_trace import RuntimeTrace
+from source.runtime.snapshot.runtime_snapshot import RuntimeSnapshot
 
 
 class CapabilityRuntime:
@@ -22,6 +23,7 @@ class CapabilityRuntime:
         self.events = RuntimeEventBus()
         self.state = RuntimeState()
         self.trace = RuntimeTrace()
+        self.snapshot = RuntimeSnapshot()
 
     def execute(
         self,
@@ -47,6 +49,12 @@ class CapabilityRuntime:
                 "context",
                 {}
             )
+        )
+
+        self.snapshot.capture(
+            self.state.current,
+            plan,
+            context
         )
 
         while not self.scheduler.finished(plan):
@@ -123,6 +131,12 @@ class CapabilityRuntime:
 
                     results[name] = result
 
+                    self.snapshot.capture(
+                        self.state.current,
+                        plan,
+                        context
+                    )
+
                 except Exception as error:  # noqa: BLE001
 
                     message = {
@@ -161,6 +175,12 @@ class CapabilityRuntime:
         self.trace.record(
             "PLAN_COMPLETED",
             self.state.current
+        )
+
+        self.snapshot.capture(
+            self.state.current,
+            plan,
+            context
         )
 
         self.events.emit("PLAN_COMPLETED")
