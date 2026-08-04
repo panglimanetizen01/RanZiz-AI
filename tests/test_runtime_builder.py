@@ -24,6 +24,23 @@ class RuntimeBuilderTest(unittest.TestCase):
         )
 
 
+
+    def test_runtime_contains_capability_pipeline(self):
+
+        builder = RuntimeBuilder()
+
+        runtime = builder.build()
+
+        coordinator = runtime.gateway.adapter.coordinator
+
+        self.assertIsNotNone(
+            coordinator.capability_pipeline
+        )
+
+        self.assertIsNotNone(
+            coordinator.capability_dispatcher
+        )
+
     def test_runtime_bridge_interface(self):
 
         builder = RuntimeBuilder()
