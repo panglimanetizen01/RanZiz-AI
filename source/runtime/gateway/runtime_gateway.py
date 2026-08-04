@@ -64,10 +64,17 @@ class RuntimeGateway:
 
     ):
 
+        if hasattr(
+            self.adapter,
+            "process"
+        ):
+
+            return self.adapter.process(
+                message,
+                context
+            )
+
         return self.adapter.run(
-
             message,
-
             context
-
         )
