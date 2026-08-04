@@ -1,10 +1,9 @@
 """
 RanZiz AI Capability Selector
-Version 2.0
+Version 1.4
 """
 
 from source.capability.catalog.catalog_service import CatalogService
-from source.capability.ranking.capability_ranker import CapabilityRanker
 
 
 class CapabilitySelector:
@@ -14,9 +13,6 @@ class CapabilitySelector:
 
         self.catalog = CatalogService()
 
-        self.ranker = CapabilityRanker(
-            self.catalog
-        )
 
 
     def select(
@@ -25,6 +21,9 @@ class CapabilitySelector:
     ):
 
         goal = str(goal).upper()
+
+        capabilities = []
+
 
         category_map = {
 
@@ -53,7 +52,6 @@ class CapabilitySelector:
             ],
 
             "VIDEO": [
-                "VIDEO",
                 "IMAGE"
             ]
 
@@ -66,9 +64,6 @@ class CapabilitySelector:
         )
 
 
-        selected = []
-
-
         for item in self.catalog.list():
 
             category = item.get(
@@ -79,24 +74,28 @@ class CapabilitySelector:
 
             if category in allowed_categories:
 
-                selected.append(
+                capabilities.append(
                     item["name"]
                 )
 
 
-        return self.ranker.rank(
-            selected
+        dependency_order = {
+
+            "Lyric Engine": 1,
+
+            "Composer": 2,
+
+            "Audio Engine": 3
+
+        }
+
+
+        capabilities.sort(
+            key=lambda name: dependency_order.get(
+                name,
+                99
+            )
         )
 
 
-    def available(self):
-
-        return self.catalog.list()
-
-
-    def __repr__(self):
-
-        return (
-            f"CapabilitySelector("
-            f"{len(self.available())} capabilities)"
-        )
+        return capabilities
