@@ -4,7 +4,8 @@ Version 2.0
 """
 
 from source.agents.base_agent import BaseAgent
-from source.engines.music.music_engine import MusicEngine
+from source.capability.capability_runtime import CapabilityRuntime
+from source.capability.capability_planner import CapabilityPlanner
 
 
 class MusicAgent(BaseAgent):
@@ -33,7 +34,9 @@ class MusicAgent(BaseAgent):
 
     def __init__(self):
 
-        self.engine = MusicEngine()
+        self.capability_planner = CapabilityPlanner()
+
+        self.runtime = CapabilityRuntime()
 
     def can_handle(self, message):
 
@@ -47,4 +50,22 @@ class MusicAgent(BaseAgent):
 
     def execute(self, message):
 
-        return self.engine.generate(message)
+        capabilities = [
+            "Lyric Engine",
+            "Composer",
+            "Audio Engine"
+        ]
+
+        plan = self.capability_planner.create(
+            capabilities
+        )
+
+        payload = {
+            "message": message,
+            "context": {}
+        }
+
+        return self.runtime.execute(
+            plan,
+            payload
+        )
