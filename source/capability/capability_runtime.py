@@ -11,6 +11,7 @@ from source.runtime.events.runtime_event_bus import RuntimeEventBus
 from source.runtime.retry.retry_executor import RetryExecutor
 from source.runtime.retry.retry_policy import RetryPolicy
 from source.runtime.state.runtime_state import RuntimeState
+from source.runtime.trace.runtime_trace import RuntimeTrace
 
 
 class CapabilityRuntime:
@@ -20,6 +21,7 @@ class CapabilityRuntime:
         self.scheduler = CapabilityScheduler()
         self.events = RuntimeEventBus()
         self.state = RuntimeState()
+        self.trace = RuntimeTrace()
 
     def execute(
         self,
@@ -28,7 +30,12 @@ class CapabilityRuntime:
     ):
 
         self.events.clear()
+        self.trace.clear()
         self.state.transition("PLANNING")
+        self.trace.record(
+            "PLAN_STARTED",
+            self.state.current
+        )
         self.events.emit("PLAN_STARTED")
 
         self.state.transition("RUNNING")
@@ -62,6 +69,12 @@ class CapabilityRuntime:
                     "RUNNING"
                 )
 
+                self.trace.record(
+                    "CAPABILITY_STARTED",
+                    self.state.current,
+                    name
+                )
+
                 self.events.emit(
                     "CAPABILITY_STARTED",
                     name
@@ -91,6 +104,15 @@ class CapabilityRuntime:
                         "SUCCESS"
                     )
 
+                    self.trace.record(
+                        "CAPABILITY_COMPLETED",
+                        self.state.current,
+                        name,
+                        {
+                            "status": "SUCCESS"
+                        }
+                    )
+
                     self.events.emit(
                         "CAPABILITY_COMPLETED",
                         name,
@@ -117,6 +139,13 @@ class CapabilityRuntime:
                         "FAILED"
                     )
 
+                    self.trace.record(
+                        "CAPABILITY_FAILED",
+                        self.state.current,
+                        name,
+                        message
+                    )
+
                     self.events.emit(
                         "CAPABILITY_FAILED",
                         name,
@@ -129,6 +158,11 @@ class CapabilityRuntime:
                 break
 
         self.state.transition("COMPLETED")
+        self.trace.record(
+            "PLAN_COMPLETED",
+            self.state.current
+        )
+
         self.events.emit("PLAN_COMPLETED")
 
         return results
