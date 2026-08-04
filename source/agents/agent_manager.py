@@ -59,6 +59,30 @@ class AgentManager:
 
 
 
+    def execute(
+        self,
+        message,
+        context=None
+    ):
+
+        for name, agent in self.agents.items():
+
+            try:
+
+                return agent.execute(
+                    message,
+                    context
+                )
+
+            except TypeError:
+
+                return agent.execute(
+                    message
+                )
+
+        return None
+
+
     def list(self):
 
         return list(
