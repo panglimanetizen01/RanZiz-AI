@@ -69,16 +69,28 @@ class AgentManager:
 
             try:
 
-                return agent.execute(
-                    message,
-                    context
-                )
-
-            except TypeError:
-
-                return agent.execute(
+                if not agent.can_handle(
                     message
-                )
+                ):
+                    continue
+
+
+                try:
+
+                    return agent.execute(
+                        message,
+                        context
+                    )
+
+                except TypeError:
+
+                    return agent.execute(
+                        message
+                    )
+
+            except AttributeError:
+
+                continue
 
         return None
 
