@@ -3,7 +3,8 @@ RanZiz AI Coding Agent
 Version 1.1
 """
 
-from source.workflow.workflow_orchestrator import WorkflowOrchestrator
+from source.capability.capability_runtime import CapabilityRuntime
+from source.capability.capability_planner import CapabilityPlanner
 
 
 class CodingAgent:
@@ -11,7 +12,10 @@ class CodingAgent:
     def __init__(self):
 
         self.name = "Coding Agent"
-        self.orchestrator = WorkflowOrchestrator()
+
+        self.capability_planner = CapabilityPlanner()
+
+        self.runtime = CapabilityRuntime()
 
     def can_handle(self, message):
 
@@ -42,13 +46,24 @@ class CodingAgent:
 
     ):
 
-        return self.orchestrator.run(
+        capabilities = [
+            "Code Engine"
+        ]
 
-            message,
-
-            context
-
+        plan = self.capability_planner.create(
+            capabilities
         )
+
+        payload = {
+            "message": message,
+            "context": context or {}
+        }
+
+        return self.runtime.execute(
+            plan,
+            payload
+        )
+
 
     def info(self):
 
