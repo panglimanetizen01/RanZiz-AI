@@ -28,7 +28,7 @@ class RuntimeIntegrationAdapter:
         return self.coordinator.get_runtime()
 
 
-    def run(
+    def process(
 
         self,
 
@@ -39,11 +39,24 @@ class RuntimeIntegrationAdapter:
     ):
 
         return self.coordinator.execute(
-
             message,
-
             context
+        )
 
+
+    def run(
+
+        self,
+
+        message,
+
+        context=None
+
+    ):
+
+        return self.process(
+            message,
+            context
         )
 
 
