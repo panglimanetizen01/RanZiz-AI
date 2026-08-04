@@ -24,10 +24,12 @@ class ComposerExecutor(BaseCapabilityExecutor):
                 ""
             )
 
-        return (
-            "Composer Result\n\n"
-            f"Source Lyrics Available : {bool(lyrics)}\n"
-            "Composition : READY"
+        return self.success(
+            {
+                "source_lyrics_available": bool(lyrics),
+
+                "composition": "READY"
+            }
         )
 
 
