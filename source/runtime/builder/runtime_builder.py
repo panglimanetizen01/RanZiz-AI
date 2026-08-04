@@ -125,4 +125,17 @@ class RuntimeBuilder:
             gateway
         )
 
+        self.gateway = gateway
+
         return bridge
+
+
+    def build_gateway(
+
+        self
+
+    ):
+
+        self.build()
+
+        return self.gateway
