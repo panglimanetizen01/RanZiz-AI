@@ -68,7 +68,13 @@ class WorkflowEngine:
         results = {}
 
 
-        for name in workflow:
+        if hasattr(workflow, "tasks"):
+            tasks = workflow.tasks
+        else:
+            tasks = workflow
+
+
+        for name in tasks:
 
             executor = self.registry.get(
                 name
@@ -100,6 +106,18 @@ class WorkflowEngine:
 
         return results
 
+
+
+    def run(
+        self,
+        workflow,
+        context=None
+    ):
+
+        return self.execute(
+            workflow,
+            context
+        )
 
 
     def count(self):

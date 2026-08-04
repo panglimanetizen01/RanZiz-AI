@@ -29,14 +29,13 @@ class WorkflowService:
         self.registry = WorkflowRegistry()
 
 
+        engine = WorkflowEngine(
+            self.registry
+        )
+
         self.runner = WorkflowRunner(
-
             self.registry,
-
-            WorkflowEngine(
-                executor
-            )
-
+            engine
         )
 
 
