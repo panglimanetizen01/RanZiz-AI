@@ -52,7 +52,19 @@ class CapabilityRuntimePipeline:
                 ""
             ),
 
-            "context": context or {}
+            "context": context or {},
+
+            "intent": plan.get(
+                "intent"
+            ),
+
+            "goal": plan.get(
+                "goal"
+            ),
+
+            "task_type": plan.get(
+                "task_type"
+            )
 
         }
 
