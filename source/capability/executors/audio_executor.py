@@ -27,11 +27,29 @@ class AudioExecutor(BaseCapabilityExecutor):
             message
         )
 
+        context = payload.get(
+            "context",
+            {}
+        )
+
+
+        topic = (
+            context.get("topic_detail")
+            or request.get("topic", "")
+        )
+
+
+        emotion = (
+            context.get("emotion")
+            or request.get("emotion", "")
+        )
+
+
         return (
             "Audio Engine Result\n\n"
             f"Genre : {request.get('genre', '')}\n"
-            f"Topic : {request.get('topic', '')}\n"
-            f"Emotion : {request.get('emotion', '')}\n"
+            f"Topic : {topic}\n"
+            f"Emotion : {emotion}\n"
             "Status : Audio preparation ready"
         )
 

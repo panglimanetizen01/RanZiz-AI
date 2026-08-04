@@ -72,6 +72,54 @@ class ContextIntelligence:
 
 
         # ==============================
+        # Emotion Detection
+        # ==============================
+
+        emotion = "neutral"
+
+
+        if any(
+            word in text
+            for word in [
+                "patah hati",
+                "sedih",
+                "kecewa",
+                "galau",
+                "rindu"
+            ]
+        ):
+
+            emotion = "sad"
+
+
+        elif any(
+            word in text
+            for word in [
+                "senang",
+                "bahagia",
+                "semangat",
+                "gembira"
+            ]
+        ):
+
+            emotion = "happy"
+
+
+
+        # ==============================
+        # Topic Detail Detection
+        # ==============================
+
+        topic_detail = None
+
+
+        if "patah hati" in text:
+
+            topic_detail = "patah hati"
+
+
+
+        # ==============================
         # Intent Detection
         # ==============================
 
@@ -109,6 +157,10 @@ class ContextIntelligence:
             "topic": topic,
 
             "intent": intent,
+
+            "emotion": emotion,
+
+            "topic_detail": topic_detail,
 
             "last_message": message
 
