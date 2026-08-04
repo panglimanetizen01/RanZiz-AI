@@ -1,12 +1,19 @@
 """
 RanZiz AI Capability Runtime
-Version 2.1
+Version 3.0
 """
 
+from source.capability.scheduler.capability_scheduler import (
+    CapabilityScheduler,
+)
 from source.runtime.context.execution_context import ExecutionContext
 
 
 class CapabilityRuntime:
+
+    def __init__(self):
+
+        self.scheduler = CapabilityScheduler()
 
     def execute(
         self,
@@ -23,61 +30,75 @@ class CapabilityRuntime:
             )
         )
 
-        for item in plan:
+        while not self.scheduler.finished(plan):
 
-            name = item["name"]
-            executor = item["executor"]
-
-            plan.set_status(
-                name,
-                "RUNNING"
+            ready = self.scheduler.ready(
+                plan
             )
 
-            try:
+            if not ready:
+                break
 
-                execution_payload = dict(
-                    payload
-                )
+            for item in ready:
 
-                execution_payload["context"] = context
-
-                result = executor.execute(
-                    execution_payload
-                )
-
-                context.set(
-                    name,
-                    result
-                )
-
-                plan.set_result(
-                    name,
-                    result
-                )
+                name = item["name"]
+                executor = item["executor"]
 
                 plan.set_status(
                     name,
-                    "SUCCESS"
+                    "RUNNING"
                 )
 
-                results[name] = result
+                try:
 
-            except Exception as error:  # noqa: BLE001
+                    execution_payload = dict(
+                        payload
+                    )
 
-                message = {
-                    "error": str(error)
-                }
+                    execution_payload["context"] = context
 
-                plan.set_result(
-                    name,
-                    message
-                )
+                    result = executor.execute(
+                        execution_payload
+                    )
 
-                plan.set_status(
-                    name,
-                    "FAILED"
-                )
+                    context.set(
+                        name,
+                        result
+                    )
 
-                results[name] = message
+                    plan.set_result(
+                        name,
+                        result
+                    )
+
+                    plan.set_status(
+                        name,
+                        "SUCCESS"
+                    )
+
+                    results[name] = result
+
+                except Exception as error:  # noqa: BLE001
+
+                    message = {
+                        "error": str(error)
+                    }
+
+                    plan.set_result(
+                        name,
+                        message
+                    )
+
+                    plan.set_status(
+                        name,
+                        "FAILED"
+                    )
+
+                    results[name] = message
+
+            if self.scheduler.failed(
+                plan
+            ):
+                break
 
         return results
