@@ -30,6 +30,27 @@ class LyricExecutor(BaseCapabilityExecutor):
             message
         )
 
+
+        context = payload.get(
+            "context",
+            {}
+        )
+
+
+        if context.get("emotion"):
+
+            request["emotion"] = context.get(
+                "emotion"
+            )
+
+
+        if context.get("topic_detail"):
+
+            request["topic"] = context.get(
+                "topic_detail"
+            )
+
+
         result = self.engine.run(
             None,
             request
