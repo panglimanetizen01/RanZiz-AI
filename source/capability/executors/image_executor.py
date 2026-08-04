@@ -16,10 +16,11 @@ class ImageExecutor(BaseCapabilityExecutor):
             ""
         )
 
-        return (
-            "Image Engine Result\n\n"
-            f"Prompt : {message}\n"
-            "Status : Image generation preparation ready"
+        return self.success(
+            {
+                "prompt": message,
+                "status": "Image generation preparation ready"
+            }
         )
 
 
