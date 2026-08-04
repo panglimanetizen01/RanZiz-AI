@@ -56,9 +56,13 @@ class LyricExecutor(BaseCapabilityExecutor):
             request
         )
 
-        return result.get(
-            "lyrics",
-            ""
+        return self.success(
+            {
+                "lyrics": result.get(
+                    "lyrics",
+                    ""
+                )
+            }
         )
 
 
