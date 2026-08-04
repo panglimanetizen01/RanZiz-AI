@@ -18,10 +18,12 @@ class CodeExecutor(BaseCapabilityExecutor):
         )
 
 
-        return (
-            "Code Engine Result\n\n"
-            f"Request : {message}\n"
-            "Status : Coding workflow ready"
+        return self.success(
+            {
+                "request": message,
+
+                "status": "Coding workflow ready"
+            }
         )
 
 
