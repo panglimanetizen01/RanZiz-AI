@@ -25,9 +25,6 @@ from source.plugins.plugin_manager import PluginManager
 from source.request.request_context import RequestContext
 from source.response.pipeline.pipeline_manager import PipelineManager
 from source.session.session_manager import SessionManager
-from source.workflow.handlers.router_handler import RouterHandler
-from source.workflow.workflow_orchestrator import WorkflowOrchestrator
-from source.workflow.workflow_router import WorkflowRouter
 
 
 class Brain:
@@ -82,18 +79,6 @@ class Brain:
             self.runtime_handler
         )
 
-        self.workflow = WorkflowOrchestrator(
-            self.executor
-        )
-
-        self.router = WorkflowRouter(
-            self.workflow,
-            self.agents
-        )
-
-        # WorkflowRouter legacy disabled.
-        # Runtime pipeline handles execution.
-        self.router_handler = None
 
         self.load_plugins()
 
@@ -266,18 +251,6 @@ class Brain:
             return plugin_result
 
 
-
-        if self.router_handler is not None:
-
-            router_result = self.router_handler.handle(
-                message,
-                session,
-                context,
-                self.build_response
-            )
-
-            if router_result is not None:
-                return router_result
 
 
         result = self.execution_handler.execute(
