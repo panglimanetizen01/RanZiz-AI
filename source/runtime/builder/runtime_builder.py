@@ -7,7 +7,6 @@ Version 1.4
 from source.agents.agent_manager import AgentManager
 from source.core.bridge.runtime_core_bridge import RuntimeCoreBridge
 from source.memory.gateway.memory_gateway import MemoryGateway
-from source.planner.executor import Executor
 from source.plugins.plugin_manager import PluginManager
 from source.runtime.assembly.runtime_assembler import RuntimeAssembler
 from source.runtime.capability.agent_runtime_capability import AgentRuntimeCapability
@@ -18,9 +17,6 @@ from source.runtime.capability.runtime_capability_dispatcher import (
 )
 from source.runtime.capability.runtime_capability_registry import (
     RuntimeCapabilityRegistry,
-)
-from source.runtime.capability.workflow_runtime_capability import (
-    WorkflowRuntimeCapability,
 )
 from source.runtime.coordinator.runtime_coordinator import RuntimeCoordinator
 from source.runtime.gateway.runtime_gateway import RuntimeGateway
