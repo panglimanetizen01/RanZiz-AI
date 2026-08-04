@@ -55,3 +55,31 @@ def test_capability_runtime_events():
     assert "CAPABILITY_COMPLETED" in names
 
     assert names[-1] == "PLAN_COMPLETED"
+
+
+def test_capability_runtime_keeps_intelligence_payload():
+
+    planner = CapabilityPlanner()
+
+    runtime = CapabilityRuntime()
+
+    plan = planner.create(
+        [
+            "Lyric Engine"
+        ]
+    )
+
+    payload = {
+        "message": "buat lagu perjuangan",
+        "context": {},
+        "intent": "CREATE",
+        "goal": "MUSIC",
+        "task_type": "general.CREATE"
+    }
+
+    runtime.execute(
+        plan,
+        payload
+    )
+
+    assert runtime.snapshot is not None
