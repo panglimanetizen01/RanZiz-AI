@@ -4,7 +4,8 @@ Version 1.0
 """
 
 
-from source.workflow.workflow_orchestrator import WorkflowOrchestrator
+from source.capability.capability_runtime import CapabilityRuntime
+from source.capability.capability_planner import CapabilityPlanner
 
 
 class ResearchAgent:
@@ -14,7 +15,9 @@ class ResearchAgent:
 
         self.name = "Research Agent"
 
-        self.orchestrator = WorkflowOrchestrator()
+        self.capability_planner = CapabilityPlanner()
+
+        self.runtime = CapabilityRuntime()
 
 
     def can_handle(self, message):
@@ -36,10 +39,30 @@ class ResearchAgent:
         )
 
 
-    def execute(self, message):
+    def execute(
 
-        return self.orchestrator.run(
-            message
+        self,
+
+        message
+
+    ):
+
+        capabilities = [
+            "Research Engine"
+        ]
+
+        plan = self.capability_planner.create(
+            capabilities
+        )
+
+        payload = {
+            "message": message,
+            "context": {}
+        }
+
+        return self.runtime.execute(
+            plan,
+            payload
         )
 
 
