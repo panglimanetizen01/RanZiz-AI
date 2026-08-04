@@ -20,6 +20,27 @@ class BaseCapabilityExecutor:
             "Executor harus memiliki method metadata()"
         )
 
+
+
+    def get_capability_name(
+        self
+    ):
+
+        try:
+
+            info = self.metadata()
+
+            if info is not None:
+
+                return info.name
+
+        except Exception:
+
+            pass
+
+        return self.__class__.__name__
+
+
     def success(
         self,
         data,
@@ -30,7 +51,7 @@ class BaseCapabilityExecutor:
 
             "status": "SUCCESS",
 
-            "capability": self.__class__.__name__,
+            "capability": self.get_capability_name(),
 
             "data": data,
 
@@ -48,7 +69,7 @@ class BaseCapabilityExecutor:
 
             "status": "FAILED",
 
-            "capability": self.__class__.__name__,
+            "capability": self.get_capability_name(),
 
             "error": str(error),
 
