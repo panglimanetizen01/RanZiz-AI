@@ -32,7 +32,6 @@ from source.runtime.pipeline.capability_runtime_pipeline import CapabilityRuntim
 from source.runtime.manager.runtime_manager import RuntimeManager
 from source.runtime.registry.runtime_registry import RuntimeRegistry
 from source.runtime.service.runtime_service import RuntimeService
-from source.workflow.workflow_orchestrator import WorkflowOrchestrator
 
 
 class RuntimeBuilder:
@@ -70,11 +69,7 @@ class RuntimeBuilder:
             PluginManager()
         )
 
-        workflow_capability = WorkflowRuntimeCapability(
-            WorkflowOrchestrator(
-                Executor()
-            )
-        )
+        workflow_capability = None
 
         agent_capability = AgentRuntimeCapability(
             AgentManager()
@@ -90,10 +85,12 @@ class RuntimeBuilder:
             plugin_capability
         )
 
-        capability_registry.register(
-            "workflow",
-            workflow_capability
-        )
+        if workflow_capability is not None:
+
+            capability_registry.register(
+                "workflow",
+                workflow_capability
+            )
 
         capability_registry.register(
             "agent",
