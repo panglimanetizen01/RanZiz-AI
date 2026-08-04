@@ -1,16 +1,17 @@
 """
 RanZiz AI Capability Planner
-Version 1.2
+Version 1.3
 """
 
 from source.capability.capability_plan import CapabilityPlan
 from source.capability.capability_router import CapabilityRouter
-from source.capability.dependency.dependency_resolver import DependencyResolver
+from source.capability.dependency.capability_dependency_resolver import (
+    CapabilityDependencyResolver,
+)
 from source.capability.ranking.capability_ranker import CapabilityRanker
 
 
 class CapabilityPlanner:
-
 
     def __init__(self):
 
@@ -18,8 +19,9 @@ class CapabilityPlanner:
 
         self.ranker = CapabilityRanker()
 
-        self.resolver = DependencyResolver()
-
+        self.resolver = CapabilityDependencyResolver(
+            self.router.registry
+        )
 
     def create(
         self,
@@ -28,21 +30,17 @@ class CapabilityPlanner:
 
         plan = CapabilityPlan()
 
-
         ranked_capabilities = self.ranker.rank(
             capabilities
         )
-
 
         resolved_capabilities = self.resolver.resolve(
             ranked_capabilities
         )
 
-
         executors = self.router.resolve(
             resolved_capabilities
         )
-
 
         for executor in executors:
 
@@ -51,5 +49,11 @@ class CapabilityPlanner:
                 executor
             )
 
-
         return plan
+
+    def __repr__(self):
+
+        return (
+            f"CapabilityPlanner("
+            f"{len(self.router.available())} capabilities)"
+        )

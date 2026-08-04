@@ -1,90 +1,40 @@
 """
 RanZiz AI Dependency Resolver
-Version 2.0
+Compatibility Wrapper
+Version 3.0
 """
 
-from source.capability.catalog.catalog_service import CatalogService
+from source.capability.capability_router import CapabilityRouter
+from source.capability.dependency.capability_dependency_resolver import (
+    CapabilityDependencyResolver,
+)
 
 
 class DependencyResolver:
 
-
     def __init__(self):
 
-        self.catalog = CatalogService()
+        router = CapabilityRouter()
 
+        self.resolver = CapabilityDependencyResolver(
+            router.registry
+        )
 
-    def resolve(self, capabilities):
-
-        ordered = []
-
-        visited = set()
-
-        metadata = {}
-
-        for item in self.catalog.list():
-
-            metadata[item["name"]] = item
-
-
-        for capability in capabilities:
-
-            self._visit(
-                capability,
-                metadata,
-                visited,
-                ordered
-            )
-
-
-        return ordered
-
-
-    def _visit(
-
+    def resolve(
         self,
-
-        capability,
-
-        metadata,
-
-        visited,
-
-        ordered
-
+        capabilities
     ):
 
-        if capability in visited:
+        return self.resolver.resolve(
+            capabilities
+        )
 
-            return
+    def graph(self):
 
+        return self.resolver.graph()
 
-        visited.add(capability)
+    def __repr__(self):
 
-
-        info = metadata.get(capability)
-
-
-        if info:
-
-            for dependency in info.get(
-                "requires",
-                []
-            ):
-
-                self._visit(
-
-                    dependency,
-
-                    metadata,
-
-                    visited,
-
-                    ordered
-
-                )
-
-
-        if capability not in ordered:
-
-            ordered.append(capability)
+        return repr(
+            self.resolver
+        )
