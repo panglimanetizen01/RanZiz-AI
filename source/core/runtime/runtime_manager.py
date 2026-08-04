@@ -1,65 +1,47 @@
 """
 RanZiz AI Core Runtime Manager
-Version 1.0
+Version 2.0
 """
 
-
-from source.core.runtime.core_runtime_adapter import CoreRuntimeAdapter
+from source.runtime.composition.runtime_composition_root import RuntimeCompositionRoot
 
 
 class RuntimeManager:
 
 
     def __init__(
-
         self
-
     ):
 
-        self.adapter = CoreRuntimeAdapter()
+        self.root = RuntimeCompositionRoot()
 
+        self.runtime = self.root.get_runtime()
 
 
     def process(
-
         self,
-
         message,
-
         context=None
-
     ):
 
-        return self.adapter.process(
-
+        return self.runtime.chat(
             message,
-
             context
-
         )
-
 
 
     def start(
-
         self,
-
         container
-
     ):
 
-        return self.adapter.start(
-
+        return self.runtime.start(
             container
-
         )
 
 
-
     def stop(
-
         self
-
     ):
 
-        return self.adapter.stop()
+        return self.runtime.stop()
