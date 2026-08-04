@@ -16,10 +16,12 @@ class ResearchExecutor(BaseCapabilityExecutor):
             ""
         )
 
-        return (
-            "Research Engine Result\n\n"
-            f"Topic : {message}\n"
-            "Status : Research preparation ready"
+        return self.success(
+            {
+                "topic": message,
+
+                "status": "Research preparation ready"
+            }
         )
 
 
