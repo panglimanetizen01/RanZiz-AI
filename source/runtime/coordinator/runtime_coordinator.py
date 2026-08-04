@@ -156,13 +156,17 @@ class RuntimeCoordinator:
 
             )
 
-            self.capability_pipeline.execute(
+            result = self.capability_pipeline.execute(
 
                 plan,
 
                 context
 
             )
+
+            if result is not None:
+
+                return result
 
 
         if (
