@@ -69,15 +69,7 @@ class Executor:
 
         else:
 
-            result = {
-
-                "status": "NO_CAPABILITY",
-
-                "goal": plan.get(
-                    "goal"
-                )
-
-            }
+            return None
 
 
 
