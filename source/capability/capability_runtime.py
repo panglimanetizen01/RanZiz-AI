@@ -8,6 +8,8 @@ from source.capability.scheduler.capability_scheduler import (
 )
 from source.runtime.context.execution_context import ExecutionContext
 from source.runtime.events.runtime_event_bus import RuntimeEventBus
+from source.runtime.retry.retry_executor import RetryExecutor
+from source.runtime.retry.retry_policy import RetryPolicy
 
 
 class CapabilityRuntime:
@@ -45,7 +47,10 @@ class CapabilityRuntime:
             for item in ready:
 
                 name = item["name"]
-                executor = item["executor"]
+                executor = RetryExecutor(
+                    item["executor"],
+                    RetryPolicy(3)
+                )
 
                 plan.set_status(
                     name,
