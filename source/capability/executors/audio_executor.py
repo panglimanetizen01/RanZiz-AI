@@ -45,12 +45,19 @@ class AudioExecutor(BaseCapabilityExecutor):
         )
 
 
-        return (
-            "Audio Engine Result\n\n"
-            f"Genre : {request.get('genre', '')}\n"
-            f"Topic : {topic}\n"
-            f"Emotion : {emotion}\n"
-            "Status : Audio preparation ready"
+        return self.success(
+            {
+                "genre": request.get(
+                    "genre",
+                    ""
+                ),
+
+                "topic": topic,
+
+                "emotion": emotion,
+
+                "status": "Audio preparation ready"
+            }
         )
 
 
