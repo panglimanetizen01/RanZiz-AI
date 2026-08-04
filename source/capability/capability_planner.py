@@ -1,6 +1,6 @@
 """
 RanZiz AI Capability Planner
-Version 1.3
+Version 1.4
 """
 
 from source.capability.capability_plan import CapabilityPlan
@@ -30,23 +30,29 @@ class CapabilityPlanner:
 
         plan = CapabilityPlan()
 
-        ranked_capabilities = self.ranker.rank(
+        ranked = self.ranker.rank(
             capabilities
         )
 
-        resolved_capabilities = self.resolver.resolve(
-            ranked_capabilities
+        resolved = self.resolver.resolve(
+            ranked
         )
 
         executors = self.router.resolve(
-            resolved_capabilities
+            resolved
         )
 
         for executor in executors:
 
+            info = executor.metadata().info()
+
             plan.add(
-                executor.metadata().info()["name"],
-                executor
+                info["name"],
+                executor,
+                info.get(
+                    "requires",
+                    []
+                )
             )
 
         return plan
