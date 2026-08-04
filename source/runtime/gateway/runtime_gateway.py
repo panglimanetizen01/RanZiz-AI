@@ -19,6 +19,15 @@ class RuntimeGateway:
 
 
 
+
+
+    def get_runtime(
+        self
+    ):
+
+        return self.adapter.get_runtime()
+
+
     def start(
 
         self,

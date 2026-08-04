@@ -16,19 +16,7 @@ class RuntimeFacade:
 
         self.kernel = kernel
 
-        runtime = getattr(
-            kernel,
-            "runtime",
-            None
-        )
-
         self.inspector = None
-
-        if runtime:
-
-            self.inspector = RuntimeInspector(
-                runtime
-            )
 
 
     def start(
@@ -60,22 +48,57 @@ class RuntimeFacade:
         return self.kernel.stop()
 
 
+    def _get_inspector(
+        self
+    ):
+
+        runtime = None
+
+        if hasattr(
+            self.kernel,
+            "get_runtime"
+        ):
+            runtime = self.kernel.get_runtime()
+
+        if (
+            runtime is not None
+            and hasattr(runtime, "get_runtime")
+        ):
+            runtime = runtime.get_runtime()
+
+        if runtime is None:
+
+            return None
+
+        if self.inspector is None:
+
+            self.inspector = RuntimeInspector(
+                runtime
+            )
+
+        return self.inspector
+
+
     def inspect(
         self
     ):
 
-        if self.inspector is None:
+        inspector = self._get_inspector()
+
+        if inspector is None:
 
             return {}
 
-        return self.inspector.status()
+        return inspector.status()
 
 
     def status(
         self
     ):
 
-        if self.inspector is None:
+        inspector = self._get_inspector()
+
+        if inspector is None:
 
             return {
                 "status": "NO_RUNTIME"
@@ -83,9 +106,9 @@ class RuntimeFacade:
 
         return {
 
-            "runtime": self.inspector.state(),
+            "runtime": inspector.state(),
 
-            "snapshot": self.inspector.snapshot()
+            "snapshot": inspector.snapshot()
 
         }
 

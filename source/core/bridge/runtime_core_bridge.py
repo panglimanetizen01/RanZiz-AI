@@ -19,6 +19,17 @@ class RuntimeCoreBridge:
 
 
 
+
+
+    def get_runtime(
+        self
+    ):
+
+        return self.gateway.get_runtime()
+
+
+
+
     def start(
 
         self,

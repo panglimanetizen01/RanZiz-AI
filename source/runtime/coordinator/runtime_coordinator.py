@@ -35,6 +35,19 @@ class RuntimeCoordinator:
 
 
 
+
+
+    def get_runtime(
+        self
+    ):
+
+        if self.capability_pipeline is None:
+
+            return None
+
+        return self.capability_pipeline.runtime
+
+
     def register_runtime(
 
         self,

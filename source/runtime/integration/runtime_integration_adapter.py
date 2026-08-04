@@ -19,6 +19,15 @@ class RuntimeIntegrationAdapter:
 
 
 
+
+
+    def get_runtime(
+        self
+    ):
+
+        return self.coordinator.get_runtime()
+
+
     def run(
 
         self,

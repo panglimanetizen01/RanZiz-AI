@@ -28,6 +28,7 @@ from source.runtime.integration.runtime_integration_adapter import (
     RuntimeIntegrationAdapter,
 )
 from source.runtime.lifecycle.runtime_lifecycle import RuntimeLifecycle
+from source.runtime.pipeline.capability_runtime_pipeline import CapabilityRuntimePipeline
 from source.runtime.manager.runtime_manager import RuntimeManager
 from source.runtime.registry.runtime_registry import RuntimeRegistry
 from source.runtime.service.runtime_service import RuntimeService
@@ -103,6 +104,8 @@ class RuntimeBuilder:
             capability_registry
         )
 
+        capability_pipeline = CapabilityRuntimePipeline()
+
         coordinator = RuntimeCoordinator(
 
             service,
@@ -111,7 +114,7 @@ class RuntimeBuilder:
 
             registry,
 
-            capability_pipeline=None,
+            capability_pipeline=capability_pipeline,
 
             capability_dispatcher=capability_dispatcher
 
