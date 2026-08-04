@@ -59,6 +59,12 @@ class Session:
 
             return value[:self.MAX_CONTENT]
 
+
+        if isinstance(value, (dict, list)):
+
+            return value
+
+
         return str(value)[:self.MAX_CONTENT]
 
 

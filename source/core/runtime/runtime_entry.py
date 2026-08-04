@@ -1,6 +1,6 @@
 """
 RanZiz AI Runtime Entry
-Version 2.0
+Version 2.1
 """
 
 from source.core.runtime.runtime_manager import RuntimeManager
@@ -12,7 +12,7 @@ class RuntimeEntry:
         self.manager = RuntimeManager()
 
     # ==========================================
-    # Compatibility Layer
+    # Core Runtime API
     # ==========================================
 
     def process(
@@ -33,6 +33,30 @@ class RuntimeEntry:
         return self.process(
             message,
             context
+        )
+
+    # ==========================================
+    # Legacy Compatibility Layer
+    # ==========================================
+
+    def ask(
+        self,
+        message
+    ):
+        return self.process(
+            message
+        )
+
+    def ask_with_provider(
+        self,
+        provider,
+        message
+    ):
+        return self.process(
+            message,
+            {
+                "provider": provider
+            }
         )
 
     # ==========================================
