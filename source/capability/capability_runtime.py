@@ -1,12 +1,13 @@
 """
 RanZiz AI Capability Runtime
-Version 3.0
+Version 4.0
 """
 
 from source.capability.scheduler.capability_scheduler import (
     CapabilityScheduler,
 )
 from source.runtime.context.execution_context import ExecutionContext
+from source.runtime.events.runtime_event_bus import RuntimeEventBus
 
 
 class CapabilityRuntime:
@@ -14,12 +15,16 @@ class CapabilityRuntime:
     def __init__(self):
 
         self.scheduler = CapabilityScheduler()
+        self.events = RuntimeEventBus()
 
     def execute(
         self,
         plan,
         payload
     ):
+
+        self.events.clear()
+        self.events.emit("PLAN_STARTED")
 
         results = {}
 
@@ -32,9 +37,7 @@ class CapabilityRuntime:
 
         while not self.scheduler.finished(plan):
 
-            ready = self.scheduler.ready(
-                plan
-            )
+            ready = self.scheduler.ready(plan)
 
             if not ready:
                 break
@@ -49,12 +52,14 @@ class CapabilityRuntime:
                     "RUNNING"
                 )
 
+                self.events.emit(
+                    "CAPABILITY_STARTED",
+                    name
+                )
+
                 try:
 
-                    execution_payload = dict(
-                        payload
-                    )
-
+                    execution_payload = dict(payload)
                     execution_payload["context"] = context
 
                     result = executor.execute(
@@ -76,6 +81,14 @@ class CapabilityRuntime:
                         "SUCCESS"
                     )
 
+                    self.events.emit(
+                        "CAPABILITY_COMPLETED",
+                        name,
+                        {
+                            "status": "SUCCESS"
+                        }
+                    )
+
                     results[name] = result
 
                 except Exception as error:  # noqa: BLE001
@@ -94,11 +107,17 @@ class CapabilityRuntime:
                         "FAILED"
                     )
 
+                    self.events.emit(
+                        "CAPABILITY_FAILED",
+                        name,
+                        message
+                    )
+
                     results[name] = message
 
-            if self.scheduler.failed(
-                plan
-            ):
+            if self.scheduler.failed(plan):
                 break
+
+        self.events.emit("PLAN_COMPLETED")
 
         return results
