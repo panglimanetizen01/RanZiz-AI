@@ -10,6 +10,7 @@ from source.runtime.context.execution_context import ExecutionContext
 from source.runtime.events.runtime_event_bus import RuntimeEventBus
 from source.runtime.retry.retry_executor import RetryExecutor
 from source.runtime.retry.retry_policy import RetryPolicy
+from source.runtime.state.runtime_state import RuntimeState
 
 
 class CapabilityRuntime:
@@ -18,6 +19,7 @@ class CapabilityRuntime:
 
         self.scheduler = CapabilityScheduler()
         self.events = RuntimeEventBus()
+        self.state = RuntimeState()
 
     def execute(
         self,
@@ -26,7 +28,10 @@ class CapabilityRuntime:
     ):
 
         self.events.clear()
+        self.state.transition("PLANNING")
         self.events.emit("PLAN_STARTED")
+
+        self.state.transition("RUNNING")
 
         results = {}
 
@@ -123,6 +128,7 @@ class CapabilityRuntime:
             if self.scheduler.failed(plan):
                 break
 
+        self.state.transition("COMPLETED")
         self.events.emit("PLAN_COMPLETED")
 
         return results
