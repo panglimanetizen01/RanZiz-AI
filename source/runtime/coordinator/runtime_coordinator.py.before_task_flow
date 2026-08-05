@@ -16,16 +16,12 @@ class RuntimeCoordinator:
         lifecycle,
 
         registry,
+
+        capability_pipeline=None,
+
         capability_dispatcher=None
 
     ):
-
-        from source.tasks.task_builder import TaskBuilder
-        from source.tasks.task_executor import TaskExecutor
-
-        self.task_builder = TaskBuilder()
-
-        self.task_executor = TaskExecutor()
 
         self.service = service
 
@@ -33,42 +29,9 @@ class RuntimeCoordinator:
 
         self.registry = registry
 
-        # compatibility alias
-        self.capability_pipeline = self
+        self.capability_pipeline = capability_pipeline
 
         self.capability_dispatcher = capability_dispatcher
-
-        # compatibility state
-        self.state = type(
-            'RuntimeState',
-            (),
-            {'current': 'READY'}
-        )()
-
-        self.snapshot = type(
-            'RuntimeSnapshot',
-            (),
-            {
-                'get': lambda self: {}
-            }
-        )()
-
-        self.events = type(
-            'RuntimeEvents',
-            (),
-            {
-                'all': lambda self: []
-            }
-        )()
-
-        self.trace = type(
-            'RuntimeTrace',
-            (),
-            {
-                'all': lambda self: []
-            }
-        )()
-
 
 
 
@@ -78,8 +41,11 @@ class RuntimeCoordinator:
         self
     ):
 
-        return self
+        if self.capability_pipeline is None:
 
+            return None
+
+        return self.capability_pipeline.runtime
 
 
     def register_runtime(
@@ -99,6 +65,18 @@ class RuntimeCoordinator:
             runtime
 
         )
+
+
+
+    def register_capability_pipeline(
+
+        self,
+
+        pipeline
+
+    ):
+
+        self.capability_pipeline = pipeline
 
 
 
@@ -160,22 +138,36 @@ class RuntimeCoordinator:
 
     ):
 
-        if context is not None:
+        if (
 
-            task_data = context.get(
-                "task",
+            self.capability_pipeline is not None
+
+            and
+
+            context is not None
+
+        ):
+
+            plan = context.get(
+
+                "plan",
+
                 None
+
             )
 
-            if task_data is not None:
+            result = self.capability_pipeline.execute(
 
-                task = self.task_builder.build(
-                    task_data
-                )
+                plan,
 
-                return self.task_executor.execute(
-                    task
-                )
+                context
+
+            )
+
+            if result is not None:
+
+                return result
+
 
         if (
 

@@ -1,23 +1,21 @@
 """
 RanZiz AI Coding Agent
-Version 1.1
+Version 2.0
 """
-
-from source.capability.capability_runtime import CapabilityRuntime
-from source.capability.capability_planner import CapabilityPlanner
 
 
 class CodingAgent:
 
+
     def __init__(self):
 
-        self.name = "Coding Agent"
+        self.name = "coding"
 
-        self.capability_planner = CapabilityPlanner()
 
-        self.runtime = CapabilityRuntime()
-
-    def can_handle(self, message):
+    def can_handle(
+        self,
+        message
+    ):
 
         text = message.lower()
 
@@ -36,39 +34,25 @@ class CodingAgent:
             for word in keywords
         )
 
-    def execute(
 
+    def create_task(
         self,
-
         message,
-
         context=None
-
     ):
 
-        capabilities = [
-            "Code Engine"
-        ]
-
-        plan = self.capability_planner.create(
-            capabilities
-        )
-
-        payload = {
+        return {
+            "capability": "Code Engine",
             "message": message,
             "context": context or {}
         }
-
-        return self.runtime.execute(
-            plan,
-            payload
-        )
 
 
     def info(self):
 
         return {
             "name": self.name,
+            "display_name": "Coding Agent",
             "category": "Coding",
             "description": "Agent khusus pemrograman dan pengembangan software"
         }

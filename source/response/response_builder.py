@@ -20,8 +20,10 @@ class ResponseBuilder:
 
         result = response
 
+        if hasattr(response, "output"):
+            result = response.output
 
-        if isinstance(
+        elif isinstance(
             response,
             dict
         ):

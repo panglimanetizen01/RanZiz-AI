@@ -14,6 +14,7 @@ from source.runtime.registry.runtime_registry import RuntimeRegistry
 from source.runtime.pipeline.context_pipeline import ContextPipeline
 from source.runtime.pipeline.decision_pipeline import DecisionPipeline
 from source.runtime.pipeline.memory_pipeline import MemoryPipeline
+from source.runtime.pipeline.capability_runtime_pipeline import CapabilityRuntimePipeline
 
 from source.context.context_gateway import ContextGateway
 from source.decision.intent_analyzer import IntentAnalyzer
@@ -60,10 +61,18 @@ class RuntimeBuilder:
             memory_gateway,
             EpisodeRecorder()
         )
+
+        task_executor = TaskExecutor()
+
+        capability_pipeline = CapabilityRuntimePipeline(
+            task_executor
+        )
+
         brain_runtime = RuntimeFactory.create(
             context_pipeline,
             decision_pipeline,
-            memory_pipeline
+            memory_pipeline,
+            capability_pipeline
         )
 
         manager = RuntimeManager()
@@ -109,6 +118,7 @@ class RuntimeBuilder:
             service,
             lifecycle,
             registry,
+            capability_pipeline=capability_pipeline,
             capability_dispatcher=dispatcher
         )
 

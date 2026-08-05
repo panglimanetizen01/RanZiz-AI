@@ -19,8 +19,6 @@ class RuntimeFactory:
 
         memory_pipeline,
 
-        capability_pipeline
-
     ):
 
 
@@ -30,9 +28,7 @@ class RuntimeFactory:
 
             decision_pipeline,
 
-            memory_pipeline,
-
-            capability_pipeline
+            memory_pipeline
 
         )
 

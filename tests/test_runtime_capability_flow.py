@@ -29,9 +29,11 @@ def test_runtime_capability_pipeline_flow():
 
     assert result is not None
 
-    assert "Lyric Engine" in result
+    assert result.capability == "Lyric Engine"
+    assert result.status == "SUCCESS"
 
-    assert result["Lyric Engine"]["status"] == "SUCCESS"
+    assert result.capability == "Lyric Engine"
+    assert result.status == "SUCCESS"
 
 
 

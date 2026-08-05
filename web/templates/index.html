@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>RanZiz AI</title>
+
+<link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<div class="logo">
+🤖 RanZiz AI
+</div>
+
+<button class="new-chat">
++ Chat Baru
+</button>
+
+<div class="menu">
+<div>💬 Percakapan</div>
+<div>🧠 Memory</div>
+<div>⚙ Pengaturan</div>
+</div>
+
+</div>
+
+<div class="main">
+
+<div class="topbar">
+<div class="title">
+RanZiz AI
+</div>
+</div>
+
+<div id="chat" class="chat">
+
+<div class="welcome">
+
+<h1>Selamat Datang</h1>
+
+<p>
+Tanyakan apa saja kepada RanZiz AI.
+</p>
+
+</div>
+
+</div>
+
+<div class="composer">
+
+<textarea
+id="message"
+placeholder="Ketik pesan..."
+rows="1"
+></textarea>
+
+<button onclick="sendMessage()">
+➜
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+const chat=document.getElementById("chat");
+
+function bubble(type,text){
+
+const div=document.createElement("div");
+
+div.className="bubble "+type;
+
+div.innerText=text;
+
+chat.appendChild(div);
+
+chat.scrollTop=chat.scrollHeight;
+
+}
+
+async function sendMessage(){
+
+let box=document.getElementById("message");
+
+let text=box.value.trim();
+
+if(!text) return;
+
+const welcome=document.querySelector(".welcome");
+
+if(welcome) welcome.remove();
+
+bubble("user",text);
+
+box.value="";
+
+bubble("loading","RanZiz sedang berpikir...");
+
+let res=await fetch("/chat",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+message:text
+})
+
+});
+
+let data=await res.json();
+
+document.querySelector(".loading").remove();
+
+bubble("assistant",data.response);
+
+}
+
+document.getElementById("message").addEventListener("keydown",function(e){
+
+if(e.key==="Enter"&&!e.shiftKey){
+
+e.preventDefault();
+
+sendMessage();
+
+}
+
+});
+
+</script>
+
+</body>
+</html>

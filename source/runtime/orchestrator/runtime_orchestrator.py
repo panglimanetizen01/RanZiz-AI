@@ -1,6 +1,6 @@
 """
 RanZiz AI Runtime Orchestrator
-Version 1.2
+Version 2.0
 """
 
 
@@ -10,13 +10,19 @@ class RuntimeOrchestrator:
         self,
         context_pipeline,
         decision_pipeline,
-        memory_pipeline,
-        capability_pipeline
+        memory_pipeline
     ):
+
+        from source.tasks.task_builder import TaskBuilder
+        from source.tasks.task_executor import TaskExecutor
+
         self.context = context_pipeline
         self.decision = decision_pipeline
         self.memory = memory_pipeline
-        self.capability = capability_pipeline
+
+        self.task_builder = TaskBuilder()
+        self.task_executor = TaskExecutor()
+
 
     def execute(
         self,
@@ -24,6 +30,7 @@ class RuntimeOrchestrator:
         request_context,
         plan=None
     ):
+
         self.context.execute(
             request_context,
             message
@@ -34,32 +41,46 @@ class RuntimeOrchestrator:
             request_context
         )
 
-        decision = decision_result.get(
-            "decision"
-        )
-
         learned = self.memory.execute(
             message,
-            decision
+            decision_result
         )
 
         if learned is not None:
             return learned
 
-        if decision is not None and decision.capabilities:
 
-            capability_plan = decision.to_dict()
+        if decision_result is not None:
 
-            capability_plan["message"] = message
+            if hasattr(
+                decision_result,
+                "to_dict"
+            ):
+                decision_result = decision_result.to_dict()
 
-            payload = {
-                "message": message,
-                "context": request_context,
-            }
+            elif isinstance(
+                decision_result,
+                dict
+            ):
 
-            return self.capability.execute(
-                capability_plan,
-                payload
+                nested = decision_result.get(
+                    "decision"
+                )
+
+                if hasattr(
+                    nested,
+                    "to_dict"
+                ):
+                    decision_result["decision"] = nested.to_dict()
+
+            task = self.task_builder.build(
+                decision_result
             )
+
+            if task is not None:
+                return self.task_executor.execute(
+                    task
+                )
+
 
         return decision_result

@@ -39,6 +39,15 @@ class EpisodeRecorder:
 
         if metadata is not None:
 
+            if hasattr(metadata, "to_dict"):
+                metadata = metadata.to_dict()
+
+            elif not isinstance(
+                metadata,
+                (str, int, float, bool, list, dict, type(None))
+            ):
+                metadata = str(metadata)
+
             event = {
                 "message": message,
                 "metadata": metadata

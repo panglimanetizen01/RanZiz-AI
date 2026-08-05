@@ -40,18 +40,27 @@ class MemoryPipeline:
         )
 
 
-        self.episode.record(
-
-            self.memory,
-
-            message,
-
-            {
-                "decision": decision.to_dict()
+        metadata = {
+            "decision": (
+                decision.to_dict()
                 if hasattr(decision, "to_dict")
                 else decision
+            )
+        }
+
+        import json
+
+        try:
+            json.dumps(metadata)
+        except TypeError:
+            metadata = {
+                "decision": str(decision)
             }
 
+        self.episode.record(
+            self.memory,
+            message,
+            metadata
         )
 
 

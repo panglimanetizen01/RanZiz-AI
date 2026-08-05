@@ -3,21 +3,26 @@ RanZiz AI Brain
 Version 9.0
 """
 
+from source.agents.agent_manager import AgentManager
 from source.agents.router.agent_router import AgentRouter
 from source.commands.commands import Commands
 from source.commands.handlers.command_handler import CommandHandler
 from source.config.config import Config
 from source.context.context_gateway import ContextGateway
+from source.core.runtime.runtime_entry import RuntimeEntry
+from source.core.runtime.runtime_handler import RuntimeHandler
 from source.decision.decision_engine import DecisionEngine
 from source.decision.goal_analyzer import GoalAnalyzer
 from source.decision.intent_analyzer import IntentAnalyzer
 from source.events.trace_events import TraceEvents
+from source.execution.handlers.execution_handler import ExecutionHandler
 from source.memory.episode.episode_recorder import EpisodeRecorder
 from source.memory.gateway.memory_gateway import MemoryGateway
 from source.memory.handlers.memory_handler import MemoryHandler
+from source.planner.executor import Executor
+from source.planner.task_planner import TaskPlanner
 from source.tasks.task_builder import TaskBuilder
 from source.tasks.task_executor import TaskExecutor
-from source.core.runtime.runtime_manager import RuntimeManager
 from source.plugins.handlers.plugin_handler import PluginHandler
 from source.plugins.plugin_manager import PluginManager
 from source.request.request_context import RequestContext
@@ -43,14 +48,18 @@ class Brain:
             self.plugins
         )
 
-        self.agent_router = AgentRouter()
+        self.agents = AgentManager()
+
+        self.agent_router = AgentRouter(
+            self.agents
+        )
 
         self.task_builder = TaskBuilder()
 
         self.task_executor = TaskExecutor()
 
-        # compatibility runtime facade
-        self.runtime = RuntimeManager()
+        self.planner = TaskPlanner()
+        self.executor = Executor()
 
         self.sessions = SessionManager()
         self.pipeline = PipelineManager()
@@ -68,6 +77,19 @@ class Brain:
         self.intent = IntentAnalyzer()
         self.goal = GoalAnalyzer()
         self.decision = DecisionEngine()
+
+        self.runtime = RuntimeEntry()
+
+        self.runtime_handler = RuntimeHandler(
+            self.runtime
+        )
+
+        self.execution_handler = ExecutionHandler(
+            self.planner,
+            self.executor,
+            self.runtime_handler
+        )
+
 
         self.load_plugins()
 
@@ -98,6 +120,23 @@ class Brain:
             context,
             response
         )
+
+
+    def runtime_fallback(
+        self,
+        result,
+        message,
+        ai_decision
+    ):
+        if result is not None:
+            return result
+
+        return self.runtime_handler.handle(
+            message,
+            ai_decision
+        )
+
+
 
 
 
@@ -225,32 +264,11 @@ class Brain:
 
 
 
-        agent = self.agent_router.route(
+        result = self.execution_handler.execute(
             message,
-            context
+            self.context.all(),
+            ai_decision
         )
-
-        if agent is not None:
-
-            task_data = agent.create_task(
-                message,
-                self.context.all()
-            )
-
-            task = self.task_builder.build(
-                task_data
-            )
-
-            result = self.task_executor.execute(
-                task
-            )
-
-        else:
-
-            result = self.runtime.process(
-                message,
-                context
-            )
 
         session.add_message(
             "assistant",

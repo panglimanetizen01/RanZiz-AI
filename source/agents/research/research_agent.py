@@ -1,11 +1,7 @@
 """
 RanZiz AI Research Agent
-Version 1.0
+Version 2.0
 """
-
-
-from source.capability.capability_runtime import CapabilityRuntime
-from source.capability.capability_planner import CapabilityPlanner
 
 
 class ResearchAgent:
@@ -13,14 +9,13 @@ class ResearchAgent:
 
     def __init__(self):
 
-        self.name = "Research Agent"
-
-        self.capability_planner = CapabilityPlanner()
-
-        self.runtime = CapabilityRuntime()
+        self.name = "research"
 
 
-    def can_handle(self, message):
+    def can_handle(
+        self,
+        message
+    ):
 
         text = message.lower()
 
@@ -39,41 +34,24 @@ class ResearchAgent:
         )
 
 
-    def execute(
-
+    def create_task(
         self,
-
-        message
-
+        message,
+        context=None
     ):
 
-        capabilities = [
-            "Research Engine"
-        ]
-
-        plan = self.capability_planner.create(
-            capabilities
-        )
-
-        payload = {
+        return {
+            "capability": "Research Engine",
             "message": message,
-            "context": {}
+            "context": context or {}
         }
-
-        return self.runtime.execute(
-            plan,
-            payload
-        )
 
 
     def info(self):
 
         return {
-
             "name": self.name,
-
+            "display_name": "Research Agent",
             "category": "Research",
-
             "description": "Agent khusus riset dan analisis informasi"
-
         }

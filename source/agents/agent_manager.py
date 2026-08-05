@@ -1,13 +1,13 @@
 """
 RanZiz AI Agent Manager
-Version 2.0
+Version 3.0
 """
 
 from source.agents.registry.agent_registry import AgentRegistry
+from source.agents.agent_loader import AgentLoader
 
 
 class AgentManager:
-
 
     def __init__(
         self,
@@ -21,16 +21,20 @@ class AgentManager:
         self.load()
 
 
-
     def load(self):
 
-        """
-        Agent loader placeholder.
-        Agent capability integration menggunakan registry.
-        """
+        loader = AgentLoader()
+
+        self.agents = loader.load()
+
+        for name, agent in self.agents.items():
+
+            self.registry.register(
+                name,
+                agent
+            )
 
         return self.agents
-
 
 
     def register(
@@ -47,7 +51,6 @@ class AgentManager:
         )
 
 
-
     def get(
         self,
         name
@@ -58,14 +61,13 @@ class AgentManager:
         )
 
 
-
     def execute(
         self,
         message,
         context=None
     ):
 
-        for name, agent in self.agents.items():
+        for _, agent in self.agents.items():
 
             try:
 
@@ -73,7 +75,6 @@ class AgentManager:
                     message
                 ):
                     continue
-
 
                 try:
 
@@ -102,13 +103,11 @@ class AgentManager:
         )
 
 
-
     def count(self):
 
         return len(
             self.agents
         )
-
 
 
     def __repr__(self):

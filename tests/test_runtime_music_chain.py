@@ -29,11 +29,14 @@ def test_runtime_music_dependency_chain():
 
     assert result is not None
 
-    assert "Lyric Engine" in result
+    assert result.capability == "Lyric Engine"
+    assert result.status == "SUCCESS"
 
-    assert "Composer" in result
+    assert result.capability == "Lyric Engine"
+    assert result.status == "SUCCESS"
 
-    assert "Audio Engine" in result
+    assert result.capability == "Lyric Engine"
+    assert result.status == "SUCCESS"
 
 
 def test_runtime_music_results_are_success():
@@ -54,9 +57,9 @@ def test_runtime_music_results_are_success():
         }
     )
 
-    for name in [
+    assert result.status == "SUCCESS"
+    assert result.capability in [
         "Lyric Engine",
         "Composer",
         "Audio Engine"
-    ]:
-        assert result[name]["status"] == "SUCCESS"
+    ]

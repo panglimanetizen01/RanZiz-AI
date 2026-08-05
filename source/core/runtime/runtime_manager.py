@@ -25,6 +25,18 @@ class RuntimeManager:
             context
         )
 
+    def execute(
+        self,
+        message,
+        context=None
+    ):
+
+        return self.process(
+            message,
+            context
+        )
+
+
 
     def start(
         self,
