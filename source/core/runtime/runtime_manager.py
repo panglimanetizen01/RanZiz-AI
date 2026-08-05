@@ -1,21 +1,17 @@
 """
 RanZiz AI Core Runtime Manager
-Version 2.0
+Version 3.0
 """
 
-from source.runtime.composition.runtime_composition_root import RuntimeCompositionRoot
+from source.runtime.builder.runtime_builder import RuntimeBuilder
 
 
 class RuntimeManager:
 
 
-    def __init__(
-        self
-    ):
+    def __init__(self):
 
-        self.root = RuntimeCompositionRoot()
-
-        self.runtime = self.root.get_runtime()
+        self.bridge = RuntimeBuilder().build()
 
 
     def process(
@@ -24,7 +20,7 @@ class RuntimeManager:
         context=None
     ):
 
-        return self.runtime.chat(
+        return self.bridge.process(
             message,
             context
         )
@@ -35,7 +31,7 @@ class RuntimeManager:
         container
     ):
 
-        return self.runtime.start(
+        return self.bridge.start(
             container
         )
 
@@ -44,4 +40,4 @@ class RuntimeManager:
         self
     ):
 
-        return self.runtime.stop()
+        return self.bridge.stop()

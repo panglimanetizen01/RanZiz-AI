@@ -22,7 +22,7 @@ class BrainRuntime:
         plan=None
     ):
 
-        if context is None:
+        if not isinstance(context, RequestContext):
             context = RequestContext()
 
             context.log(

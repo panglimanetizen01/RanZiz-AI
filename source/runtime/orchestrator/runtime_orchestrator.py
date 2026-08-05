@@ -1,6 +1,6 @@
 """
 RanZiz AI Runtime Orchestrator
-Version 1.1
+Version 1.2
 """
 
 
@@ -29,28 +29,37 @@ class RuntimeOrchestrator:
             message
         )
 
-        decision = self.decision.execute(
+        decision_result = self.decision.execute(
             message,
             request_context
         )
 
+        decision = decision_result.get(
+            "decision"
+        )
+
         learned = self.memory.execute(
             message,
-            decision["decision"]
+            decision
         )
 
         if learned is not None:
             return learned
 
-        if plan is not None:
+        if decision is not None and decision.capabilities:
+
+            capability_plan = decision.to_dict()
+
+            capability_plan["message"] = message
+
             payload = {
                 "message": message,
                 "context": request_context,
             }
 
             return self.capability.execute(
-                plan,
+                capability_plan,
                 payload
             )
 
-        return decision
+        return decision_result
