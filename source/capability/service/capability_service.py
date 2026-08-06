@@ -105,3 +105,15 @@ class CapabilityService:
             f"CapabilityService("
             f"{self.count()} capabilities)"
         )
+
+    def pilih_dari_keputusan(self, hasil_analisis: Dict):
+        """Ambil daftar kemampuan langsung dari hasil keputusan Decision Engine"""
+        daftar_nama = hasil_analisis.get("kemampuan_dipilih", [])
+        if not daftar_nama:
+            return [self.registry.cari("ChatCapability")]
+        return [self.registry.cari(nama) for nama in daftar_nama if self.registry.ada(nama)]
+
+    def dapatkan_provider_urut(self, capability_nama: str):
+        """Ambil urutan provider terbaik untuk kemampuan ini"""
+        from source.engine.provider.provider_selector import ProviderSelector
+        return ProviderSelector.pilih(capability_nama)

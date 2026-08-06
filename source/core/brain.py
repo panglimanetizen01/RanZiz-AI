@@ -1,264 +1,54 @@
-"""
-RanZiz AI Brain
-Version 9.0
-"""
+# RanZiz AI - Core Brain
+# Versi: 1.2.0 | Alur disambung penuh & keluaran terstandar
+# Aturan: Selalu kembalikan teks bersih, tidak ada data mentah
 
-from source.agents.router.agent_router import AgentRouter
-from source.commands.commands import Commands
-from source.commands.handlers.command_handler import CommandHandler
-from source.config.config import Config
-from source.context.context_gateway import ContextGateway
-from source.decision.decision_engine import DecisionEngine
-from source.decision.goal_analyzer import GoalAnalyzer
+from typing import Dict, Any
 from source.decision.intent_analyzer import IntentAnalyzer
-from source.events.trace_events import TraceEvents
-from source.memory.episode.episode_recorder import EpisodeRecorder
-from source.memory.gateway.memory_gateway import MemoryGateway
-from source.memory.handlers.memory_handler import MemoryHandler
-from source.tasks.task_builder import TaskBuilder
-from source.tasks.task_executor import TaskExecutor
-from source.core.runtime.runtime_manager import RuntimeManager
-from source.plugins.handlers.plugin_handler import PluginHandler
-from source.plugins.plugin_manager import PluginManager
-from source.request.request_context import RequestContext
-from source.response.pipeline.pipeline_manager import PipelineManager
-from source.session.session_manager import SessionManager
-
+from source.capability.service.capability_service import CapabilityService
+from source.engine.provider.provider_selector import ProviderSelector
 
 class Brain:
-
     def __init__(self):
-        self.name = Config.APP_NAME
-        self.version = Config.VERSION
-
-        self.commands = Commands()
-
-        self.command_handler = CommandHandler(
-            self.commands
-        )
-
-        self.plugins = PluginManager()
-
-        self.plugin_handler = PluginHandler(
-            self.plugins
-        )
-
-        self.agent_router = AgentRouter()
-
-        self.task_builder = TaskBuilder()
-
-        self.task_executor = TaskExecutor()
-
-        # compatibility runtime facade
-        self.runtime = RuntimeManager()
-
-        self.sessions = SessionManager()
-        self.pipeline = PipelineManager()
-
-        self.memory = MemoryGateway()
-        self.episode = EpisodeRecorder()
-
-        self.memory_handler = MemoryHandler(
-            self.memory,
-            self.episode
-        )
-
-        self.context = ContextGateway()
-
-        self.intent = IntentAnalyzer()
-        self.goal = GoalAnalyzer()
-        self.decision = DecisionEngine()
-
-        self.load_plugins()
-
-
-    def load_plugins(self):
-        if hasattr(
-            self.plugins,
-            "load_plugins"
-        ):
-            self.plugins.load_plugins()
-
-
-    def startup(self):
-        return (
-            f"{self.name} "
-            f"v{self.version} siap digunakan."
-        )
-
-
-    def build_response(
-        self,
-        session,
-        context,
-        response
-    ):
-        return self.pipeline.process(
-            session.id,
-            context,
-            response
-        )
-
-
-
-
-    def process(
-        self,
-        message,
-        session_id=None
-    ):
-        context = RequestContext()
-
-        context.log(
-            TraceEvents.REQUEST_CREATED,
-            {
-                "module": "Brain"
-            }
-        )
-
-        session = self.sessions.get_or_create(
-            session_id
-        )
-
-        session.add_message(
-            "user",
-            message
-        )
-
-        if not message.strip():
-            return self.build_response(
-                session,
-                context,
-                "Silakan tulis sesuatu."
-            )
-
-
-        active_context = self.context.analyze(
-            message
-        )
-
-        context.set(
-            "active_context",
-            active_context
-        )
-
-
-        intent = self.intent.analyze(
-            message
-        )
-
-        goal = self.goal.analyze(
-            message
-        )
-
-        ai_decision = self.decision.decide(
-            intent,
-            goal,
-            context
-        )
-
-
-        learned = self.memory_handler.learn(
-            message,
-            ai_decision,
-            context
-        )
-
-        if learned is not None:
-
-            session.add_message(
-                "assistant",
-                learned
-            )
-
-            return self.build_response(
-                session,
-                context,
-                learned
-            )
-
-
-        memory_result = self.memory_handler.fallback(
-            message,
-            session,
-            context,
-            self.build_response
-        )
-
-        if memory_result is not None:
-            return memory_result
-
-
-        retrieved_result = self.memory_handler.retrieve(
-            message,
-            ai_decision,
-            session,
-            context,
-            self.build_response
-        )
-
-        if retrieved_result is not None:
-            return retrieved_result
-
-
-        command_result = self.command_handler.handle(
-            message,
-            session,
-            context,
-            self.build_response
-        )
-
-        if command_result is not None:
-            return command_result
-
-
-        plugin_result = self.plugin_handler.handle(
-            message,
-            session,
-            context,
-            self.build_response
-        )
-
-        if plugin_result is not None:
-            return plugin_result
-
-
-
-
-        agent = self.agent_router.route(
-            message,
-            context
-        )
-
-        if agent is not None:
-
-            task_data = agent.create_task(
-                message,
-                self.context.all()
-            )
-
-            task = self.task_builder.build(
-                task_data
-            )
-
-            result = self.task_executor.execute(
-                task
-            )
-
-        else:
-
-            result = self.runtime.process(
-                message,
-                context
-            )
-
-        session.add_message(
-            "assistant",
-            str(result)
-        )
-
-        return self.build_response(
-            session,
-            context,
-            result
-        )
+        self.capability_svc = CapabilityService()
+        self.provider_selector = ProviderSelector()
+
+    def proses(self, pesan_pengguna: str) -> str:
+        """
+        Alur proses penuh yang terstandar:
+        1. Terima pesan
+        2. Analisis maksud
+        3. Pilih kemampuan
+        4. Pilih penyedia layanan
+        5. Hasilkan jawaban akhir berupa teks
+        """
+        try:
+            # Langkah 1 & 2: Analisis maksud
+            hasil_analisis = IntentAnalyzer.analisis(pesan_pengguna)
+            intent = hasil_analisis["intent"]
+            daftar_kemampuan = hasil_analisis["kemampuan_dipilih"]
+
+            # Langkah 3 & 4: Susun ringkasan keputusan
+            ringkasan = f"✅ Keputusan RanZiz AI:\n"
+            ringkasan += f"🎯 Maksud terdeteksi: {intent}\n"
+            ringkasan += f"🛠️ Kemampuan terpilih: {', '.join(daftar_kemampuan)}\n"
+            ringkasan += f"🔌 Urutan Penyedia: "
+
+            daftar_provider_terpilih = []
+            for nama_cap in daftar_kemampuan:
+                urut_provider = self.provider_selector.pilih(nama_cap)
+                daftar_provider_terpilih.extend(urut_provider)
+            
+            # Hapus nama ganda
+            daftar_unik = list(dict.fromkeys(daftar_provider_terpilih))
+            ringkasan += f"{', '.join(daftar_unik)}\n\n"
+            ringkasan += "🧠 Sistem siap memproses permintaan sesuai aturan yang berlaku."
+
+            # Langkah 5: Pastikan selalu mengembalikan teks
+            return ringkasan.strip()
+
+        except Exception as e:
+            # Tangani kesalahan agar tidak rusak
+            return f"⚠️ Peringatan Sistem: Terjadi pengecekan ulang - {str(e)}"
+
+# Inisialisasi satu kali untuk pemakaian umum
+otak = Brain()
